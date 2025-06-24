@@ -59,8 +59,6 @@
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                console.log("[LOG] XML cargado desde archivo: " + file.name);
-                document.getElementById('nombreArchivoXML').textContent = "Archivo cargado: " + file.name;
                 const parser = new DOMParser();
                 xmlDocOriginal = parser.parseFromString(e.target.result, 'application/xml');
                 document.getElementById('tabPanel').style.display = 'block';
