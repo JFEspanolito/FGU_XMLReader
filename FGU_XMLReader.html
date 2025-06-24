@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Visor de XML</title>
+    <style>
+        .columna {
+            flex: 1;
+            min-width: 200px;
+            max-width: 220px;
+        }
+        .campo {
+            margin-bottom: 6px;
+        }
+        .campo label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center;">Importador/Exportador de XML</h1>
+
+    <div style="display: flex; justify-content: space-between; max-width: 600px; margin: 0 auto;">
+        <div>
+            <button onclick="document.getElementById('fileInput').click()">Importar XML</button>
+            <input type="file" id="fileInput" accept=".xml" style="display:none" onchange="importarXML()">
+        </div>
+        <div>
+            <div id="nombreArchivoXML"></div>
+        </div>
+        <div>
+            <button onclick="exportarXML()">Exportar XML</button>
+        </div>
+    </div>
+
+    <div id="tabPanel" style="margin-top: 30px; display: none; text-align: center;">
+        <button onclick="mostrarVistaMain()">Main</button>
+        <button onclick="mostrarVistaCombat()">Combat</button>
+        <button onclick="mostrarVistaSkills()">Skills</button>
+        <button onclick="mostrarVistaAbilities()">Abilities</button>
+        <button onclick="mostrarVistaInventory()">Inventory</button>
+        <button onclick="mostrarVistaNotes()">Notes</button>
+        <button onclick="mostrarVistaActions()">Actions</button>
+    </div>
+
+    <div id="vistaMain" style="text-align: center; margin-top: 20px; display: none;">
+        <div id="datosMain"></div>
+    </div>
+
+    <script>
+        let xmlDocOriginal = null;
+
+        function importarXML() {
+            const input = document.getElementById('fileInput');
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                console.log("[LOG] XML cargado desde archivo: " + file.name);
+                document.getElementById('nombreArchivoXML').textContent = "Archivo cargado: " + file.name;
+                const parser = new DOMParser();
+                xmlDocOriginal = parser.parseFromString(e.target.result, 'application/xml');
+                document.getElementById('tabPanel').style.display = 'block';
+                mostrarVistaMain();
+            };
+            reader.readAsText(file);
+        }
+
+        function exportarXML() {
+            if (!xmlDocOriginal) {
+                alert("No hay ningún XML cargado para exportar.");
+                return;
+            }
+
+            const serializer = new XMLSerializer();
+            const xmlStr = serializer.serializeToString(xmlDocOriginal);
+            const blob = new Blob([xmlStr], { type: 'application/xml' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'personaje.xml';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function mostrarVistaMain() {
+            console.log("[LOG] Ejecutando mostrarVistaMain");
+            if (!xmlDocOriginal) {
+                console.error("[ERROR] No hay XML cargado");
+                return;
+            }
+            ocultarVistas();
+            document.getElementById('vistaMain').style.display = 'block';
+
+            const datosMain = document.getElementById('datosMain');
+            datosMain.innerHTML = '';
+
+            const wrapper = document.createElement('div');
+            wrapper.style = 'display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;';
+
+            const col1 = document.createElement('div');
+            col1.className = 'columna';
+
+            const campos1 = [
+                ['Nombre', 'identity > name'], ['Género', 'identity > gender'], ['Edad', 'identity > age'],
+                ['Altura', 'identity > height'], ['Peso', 'identity > weight'], ['Tamaño', 'identity > size'],
+                ['Alineación', 'identity > alignment'], ['Deidad', 'identity > deity'],
+                ['Raza', 'race > name'], ['Clase', 'classes > class > name'], ['Nivel', 'classes > class > level'],
+                ['Damage Reduction', 'defenses > damage_reduction'], ['Resistance', 'defenses > resistance'],
+                ['Immunities', 'defenses > immunities'], ['Special Qualities', 'defenses > special_qualities'], ['Sentidos', 'senses']
+            ];
+
+            campos1.forEach(([label, path]) => {
+                const nodo = xmlDocOriginal.querySelector(path);
+                if (!nodo) {
+                    console.warn(`[WARN] No se encontró el nodo: ${path}`);
+                    return;
+                }
+                const div = document.createElement('div');
+                div.className = 'campo';
+                div.innerHTML = `<label><b>${label}:</b></label><input type="text" value="${nodo.textContent.trim()}" style="width: 100%;" data-node="${path}">`;
+                div.querySelector('input').oninput = function () {
+                    const target = xmlDocOriginal.querySelector(path);
+                    if (target) target.textContent = this.value.trim();
+                };
+                col1.appendChild(div);
+            });
+
+            wrapper.appendChild(col1);
+            datosMain.appendChild(wrapper);
+        }
+
+        function ocultarVistas() {
+            document.getElementById('vistaMain').style.display = 'none';
+            document.getElementById('vistaCombat')?.style.display = 'none';
+            document.getElementById('vistaSkills')?.style.display = 'none';
+            document.getElementById('vistaAbilities')?.style.display = 'none';
+            document.getElementById('vistaInventory')?.style.display = 'none';
+            document.getElementById('vistaNotes')?.style.display = 'none';
+            document.getElementById('vistaActions')?.style.display = 'none';
+        }
+
+        function mostrarVistaCombat() { ocultarVistas(); document.getElementById('vistaCombat')?.style.display = 'block'; }
+        function mostrarVistaSkills() { ocultarVistas(); document.getElementById('vistaSkills')?.style.display = 'block'; }
+        function mostrarVistaAbilities() { ocultarVistas(); document.getElementById('vistaAbilities')?.style.display = 'block'; }
+        function mostrarVistaInventory() { ocultarVistas(); document.getElementById('vistaInventory')?.style.display = 'block'; }
+        function mostrarVistaNotes() { ocultarVistas(); document.getElementById('vistaNotes')?.style.display = 'block'; }
+        function mostrarVistaActions() { ocultarVistas(); document.getElementById('vistaActions')?.style.display = 'block'; }
+    </script>
+</body>
+
+</html>
