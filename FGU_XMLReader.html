@@ -3,24 +3,43 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Visor de XML</title>
+<<<<<<< HEAD
+    <title>FGU Character Editor</title>
     <style>
-        .columna {
-            flex: 1;
-            min-width: 200px;
-            max-width: 220px;
-        }
-        .campo {
-            margin-bottom: 6px;
-        }
-        .campo label {
+        .tab-button {
+            background-color: #808080;
+            color: black;
+            border: 2px solid #333;
+            border-radius: 5px 5px 0 0;
+            padding: 6px 12px;
+            margin-right: 4px;
             font-weight: bold;
+            cursor: pointer;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .tab-button.active {
+            background-color: #808080;
+            color: white;
+        }
+
+        .tab-button:hover {
+            filter: brightness(1.2);
+        }
+
+        input[type="text"], input[type="number"], textarea {
+            text-align: center;
         }
     </style>
+=======
+    <title>Visor de XML</title>
+>>>>>>> a0d30447a0b2a341dfa158b9e61641751fe8c093
 </head>
 
 <body>
-    <h1 style="text-align: center;">Importador/Exportador de XML</h1>
+    <h1 style="text-align: center;">Editor de XML para Pathfinder 1e de FGU</h1>
 
     <div style="display: flex; justify-content: space-between; max-width: 600px; margin: 0 auto;">
         <div>
@@ -35,18 +54,40 @@
         </div>
     </div>
 
+<<<<<<< HEAD
+    <div id="tabPanel" style="margin-top: 20px; display: none; text-align: center;">
+        <button class="tab-button" onclick="mostrarVistaMain(this)">Main</button>
+        <button class="tab-button" onclick="mostrarVistaCombat(this)">Combat</button>
+        <button class="tab-button" onclick="mostrarVistaSkills(this)">Skills</button>
+        <button class="tab-button" onclick="mostrarVistaAbilities(this)">Abilities</button>
+        <button class="tab-button" onclick="mostrarVistaInventory(this)">Inventory</button>
+        <button class="tab-button" onclick="mostrarVistaNotes(this)">Notes</button>
+        <button class="tab-button" onclick="mostrarVistaActions(this)">Actions</button>
+=======
+    <!-- Panel de pestañas visible solo si hay XML -->
     <div id="tabPanel" style="margin-top: 30px; display: none; text-align: center;">
-        <button onclick="mostrarVistaMain()">Main</button>
-        <button onclick="mostrarVistaCombat()">Combat</button>
-        <button onclick="mostrarVistaSkills()">Skills</button>
-        <button onclick="mostrarVistaAbilities()">Abilities</button>
-        <button onclick="mostrarVistaInventory()">Inventory</button>
-        <button onclick="mostrarVistaNotes()">Notes</button>
-        <button onclick="mostrarVistaActions()">Actions</button>
+  <button onclick="mostrarVistaMain()">Main</button>
+  <button onclick="mostrarVistaCombat()">Combat</button>
+  <button onclick="mostrarVistaSkills()">Skills</button>
+  <button onclick="mostrarVistaAbilities()">Abilities</button>
+  <button onclick="mostrarVistaInventory()">Inventory</button>
+  <button onclick="mostrarVistaNotes()">Notes</button>
+  <button onclick="mostrarVistaActions()">Actions</button>
+>>>>>>> a0d30447a0b2a341dfa158b9e61641751fe8c093
     </div>
 
+    <!-- Área de visualización de la pestaña MAIN -->
     <div id="vistaMain" style="text-align: center; margin-top: 20px; display: none;">
         <div id="datosMain"></div>
+        <div class="attr-block" id="atributos" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 20px;"></div>
+<<<<<<< HEAD
+=======
+    </div>
+
+    <!-- Placeholder para futuras pestañas -->
+    <div id="vistaEquipo" style="display: none; text-align: center; margin-top: 20px;">
+        <p>[Contenido del equipamiento por implementar]</p>
+>>>>>>> a0d30447a0b2a341dfa158b9e61641751fe8c093
     </div>
 
     <script>
@@ -59,8 +100,10 @@
 
             const reader = new FileReader();
             reader.onload = function(e) {
+
                 console.log("[LOG] XML cargado desde archivo: " + file.name);
                 document.getElementById('nombreArchivoXML').textContent = "Archivo cargado: " + file.name;
+
                 const parser = new DOMParser();
                 xmlDocOriginal = parser.parseFromString(e.target.result, 'application/xml');
                 document.getElementById('tabPanel').style.display = 'block';
@@ -87,41 +130,69 @@
             URL.revokeObjectURL(url);
         }
 
+        function activarPestanaActiva(btn) {
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+                const nombreDiv = document.getElementById("nombreArchivoXML");
+                nombreDiv.style.cursor = "pointer";
+                nombreDiv.title = "Haz clic para limpiar la pantalla";
+                nombreDiv.style.color = 'blue';
+
+                nombreDiv.addEventListener("click", () => {
+                    if (confirm("¿Deseas limpiar pantalla?")) {
+                        location.reload();
+                    }
+                });
+            });        
+
         function mostrarVistaMain() {
-            console.log("[LOG] Ejecutando mostrarVistaMain");
-            if (!xmlDocOriginal) {
-                console.error("[ERROR] No hay XML cargado");
-                return;
-            }
-            ocultarVistas();
+<<<<<<< HEAD
+            if (!xmlDocOriginal) return;
+
+            // Ocultar otras vistas
             document.getElementById('vistaMain').style.display = 'block';
+            activarPestanaActiva(document.querySelector('.tab-button'));
+=======
+    if (!xmlDocOriginal) return;
+>>>>>>> a0d30447a0b2a341dfa158b9e61641751fe8c093
 
-            const datosMain = document.getElementById('datosMain');
-            datosMain.innerHTML = '';
+    // Ocultar otras vistas
+    document.getElementById('vistaMain').style.display = 'block';
 
-            const wrapper = document.createElement('div');
-            wrapper.style = 'display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;';
+    const datosMain = document.getElementById('datosMain');
+    datosMain.innerHTML = '';
 
+<<<<<<< HEAD
+            // Columna Izquierda
             const col1 = document.createElement('div');
-            col1.className = 'columna';
+            col1.style = 'flex: 1; min-width: 200px; max-width: 220px; margin-left: 50px;';
 
             const campos1 = [
-                ['Nombre', 'identity > name'], ['Género', 'identity > gender'], ['Edad', 'identity > age'],
-                ['Altura', 'identity > height'], ['Peso', 'identity > weight'], ['Tamaño', 'identity > size'],
-                ['Alineación', 'identity > alignment'], ['Deidad', 'identity > deity'],
-                ['Raza', 'race > name'], ['Clase', 'classes > class > name'], ['Nivel', 'classes > class > level'],
-                ['Damage Reduction', 'defenses > damage_reduction'], ['Resistance', 'defenses > resistance'],
-                ['Immunities', 'defenses > immunities'], ['Special Qualities', 'defenses > special_qualities'], ['Sentidos', 'senses']
+                ['Nombre', 'character > name'],
+                ['Género', 'character > gender'],
+                ['Edad', 'character > age'],
+                ['Altura', 'character > height'],
+                ['Peso', 'character > weight'],
+                ['Tamaño', 'character > size'],
+                ['Alineación', 'character > alignment'],
+                ['Deidad', 'character > deity'],
+                ['Raza', 'character > languagelist > * > name'],
+                ['Clase', 'character > classes > * > name'],
+                ['Nivel', 'character > level'],
+                ['Damage Reduction', 'character > damage_reduction'],
+                ['Resistance', 'character > resistance'],
+                ['Immunities', 'character > immunities'],
+                ['Special Qualities', 'character > special_qualities'],
+                ['Sentidos', 'character > senses']
             ];
-
             campos1.forEach(([label, path]) => {
                 const nodo = xmlDocOriginal.querySelector(path);
-                if (!nodo) {
-                    console.warn(`[WARN] No se encontró el nodo: ${path}`);
-                    return;
-                }
+                if (!nodo) return;
                 const div = document.createElement('div');
-                div.className = 'campo';
+                div.style = 'margin-bottom: 4px;';
                 div.innerHTML = `<label><b>${label}:</b></label><input type="text" value="${nodo.textContent.trim()}" style="width: 100%;" data-node="${path}">`;
                 div.querySelector('input').oninput = function () {
                     const target = xmlDocOriginal.querySelector(path);
@@ -130,27 +201,250 @@
                 col1.appendChild(div);
             });
 
+            // Columna Centro
+            const col2 = document.createElement('div');
+            col2.style = 'flex: 1; min-width: 220px; display: flex; flex-direction: column; align-items: center;';
+
+            const stats = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
+
+            stats.forEach(stat => {
+                const nodo = xmlDocOriginal.querySelector(stat);
+                if (!nodo) return;
+
+                const scoreNode = nodo.querySelector('score');
+                const dmgNode = nodo.querySelector('damage');
+                const score = parseInt(scoreNode?.textContent || '0');
+                const dmg = parseInt(dmgNode?.textContent || '0');
+                const mod = Math.floor((score - dmg - 10) / 2);
+                const label = stat.substring(0, 3).toUpperCase();
+
+                const bloque = document.createElement('div');
+                bloque.style = 'margin-bottom: 8px; text-align: center;';
+
+                bloque.innerHTML = `
+                    <div><b>${label}</b></div>
+                    <div style="display: flex; justify-content: center; gap: 10px; font-size: 12px; margin-bottom: 2px;">
+                        <span style="display: inline-block; width: 50px; text-align: center;">Score</span>
+                        <span style="display: inline-block; width: 50px; text-align: center;">MOD</span>
+                        <span style="display: inline-block; width: 50px; text-align: center;">DMG</span>
+                    </div>
+                    <div style="display: flex; justify-content: center; gap: 10px;">
+                        <input type="number" value="${score}" style="width: 50px;"
+                            onchange="xmlDocOriginal.querySelector('${stat} > score').textContent = this.value.trim(); mostrarVistaMain();">
+                        <span style="display: inline-block; width: 50px; text-align: center;"><b>${mod >= 0 ? '+' : ''}${mod}</b></span>
+                        <input type="number" value="${dmg}" style="width: 50px;"
+                            onchange="xmlDocOriginal.querySelector('${stat} > damage').textContent = this.value.trim(); mostrarVistaMain();">
+                    </div>
+                `;
+                col2.appendChild(bloque);
+            });
+
+            const otrosCentro = [
+                ['AC', 'ac > total'],
+                ['Iniciativa', 'initiative > total'],
+                ['Velocidad', 'speed > total'],  // solo este cambia
+                ['Will', 'will > total'],
+                ['Reflex', 'reflex > total'],
+                ['Fort', 'fortitude > total']
+            ];
+
+            otrosCentro.forEach(([label, path]) => {
+                const nodo = xmlDocOriginal.querySelector(path);
+                if (!nodo) return;
+                const div = document.createElement('div');
+                div.style = 'margin-bottom: 6px;';
+                div.innerHTML = `<label><b>${label}:</b></label></br><input type="text" value="${nodo.textContent.trim()}" style="min-width: 200px; max-width: 220px;" data-node="${path}">`;
+                div.querySelector('input').oninput = function () {
+                    xmlDocOriginal.querySelector(path).textContent = this.value.trim();
+                };
+                col2.appendChild(div);
+            });
+
+            // Columna Derecha
+            const col3 = document.createElement('div');
+            col3.style = 'flex: 1; min-width: 200px; max-width: 220px; margin-right: 50px;';
+
+            const campos3 = [
+                ['HP Máximo', 'character > hp > total'],
+                ['Temp HP', 'character > temp'],
+                ['Wounds', 'character > wounds'],
+                ['Subdual', 'character > subdual'],
+                ['BAB', 'character > attackbonus > base'],
+                ['Melee', 'character > attackbonus > melee > total'],
+                ['Ranged', 'character > attackbonus > ranged > total'],
+                ['CMB', 'character > attackbonus > grapple > total'],
+                ['CMD', 'character > cmd'],
+                ['FF', 'character > ff'],
+                ['Tch', 'character > touch'],
+                ['SR', 'character > sr'],
+                ['Special Movement', 'character > specialmovement'],
+                ['Notas', 'character > notes_main']
+            ];
+
+            campos3.forEach(([label, path]) => {
+                const nodo = xmlDocOriginal.querySelector(path);
+                if (!nodo) return;
+
+                const cont = document.createElement('div');
+                cont.style = 'margin-bottom: 6px;';
+
+                const lbl = document.createElement('label');
+                lbl.textContent = `${label}: `;
+                lbl.style = 'font-weight: bold;';
+
+                let input;
+                if (label === 'Notas') {
+                    input = document.createElement('textarea');
+                    input.rows = 3;
+                    input.style = 'width: 100%;';
+                } else {
+                    input = document.createElement('input');
+                    input.type = 'text';
+                    input.style = 'width: 100%;';
+                }
+
+                input.value = nodo.textContent.trim();
+                input.oninput = () => {
+                    nodo.textContent = input.value.trim();
+                };
+
+                cont.appendChild(lbl);
+                cont.appendChild(input);
+                col3.appendChild(cont);
+            });
+
+            document.getElementById('vistaMain').style.display = 'block';
             wrapper.appendChild(col1);
+            wrapper.appendChild(col2);
+            wrapper.appendChild(col3);
             datosMain.appendChild(wrapper);
+            document.getElementById('vistaMain').style.display = 'block';
+        }
+=======
+    const wrapper = document.createElement('div');
+    wrapper.style = 'display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;';
+
+    // Columna Izquierda
+    const col1 = document.createElement('div');
+    col1.style = 'flex: 1; min-width: 200px; max-width: 220px; margin-left: 50px;';
+
+    const campos1 = [
+        ['Nombre', 'name'], ['Género', 'gender'], ['Edad', 'age'], ['Altura', 'height'],
+        ['Peso', 'weight'], ['Tamaño', 'size'], ['Alineación', 'alignment'], ['Deidad', 'deity'],
+        ['Raza', 'languagelist > * > name'], ['Clase', 'classes > * > name'], ['Nivel', 'level'],
+        ['Damage Reduction', 'damage_reduction'], ['Resistance', 'resistance'],
+        ['Immunities', 'immunities'], ['Special Qualities', 'special_qualities'], ['Sentidos', 'senses']
+    ];
+
+    campos1.forEach(([label, path]) => {
+        const nodo = xmlDocOriginal.querySelector(path);
+        if (!nodo) return;
+        const div = document.createElement('div');
+        div.style = 'margin-bottom: 4px;';
+        div.innerHTML = `<label><b>${label}:</b></label><input type="text" value="${nodo.textContent.trim()}" style="width: 100%;" data-node="${path}">`;
+        div.querySelector('input').oninput = function () {
+            const target = xmlDocOriginal.querySelector(path);
+            if (target) target.textContent = this.value.trim();
+        };
+        col1.appendChild(div);
+    });
+
+    // Columna Centro
+    const col2 = document.createElement('div');
+    col2.style = 'flex: 1; min-width: 220px; display: flex; flex-direction: column; align-items: center;';
+
+    const stats = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
+    stats.forEach(stat => {
+        const nodo = xmlDocOriginal.querySelector(stat);
+        if (!nodo) return;
+
+        const scoreNode = nodo.querySelector('score');
+        const dmgNode = nodo.querySelector('damage');
+        const score = parseInt(scoreNode?.textContent || '0');
+        const dmg = parseInt(dmgNode?.textContent || '0');
+        const mod = Math.floor((score - dmg - 10) / 2);
+        const label = stat.substring(0, 3).toUpperCase();
+
+        const bloque = document.createElement('div');
+        bloque.style = 'margin-bottom: 8px; text-align: center;';
+
+        bloque.innerHTML = `
+            <div><b>${label}</b></div>
+            <input type="number" value="${score}" style="width: 50px; text-align: center;" onchange="xmlDocOriginal.querySelector('${stat} > score').textContent = this.value.trim(); mostrarVistaMain();">
+            <span><b>${mod >= 0 ? '+' : ''}${mod}</b></span>
+            <input type="number" value="${dmg}" style="width: 50px; text-align: center;" onchange="xmlDocOriginal.querySelector('${stat} > damage').textContent = this.value.trim(); mostrarVistaMain();">
+        `;
+        col2.appendChild(bloque);
+    });
+
+    const otrosCentro = [
+        ['AC', 'ac > total'], ['Iniciativa', 'initiative > total'], ['Velocidad', 'speed'],
+        ['Will', 'will > total'], ['Reflex', 'reflex > total'], ['Fort', 'fortitude > total']
+    ];
+
+    otrosCentro.forEach(([label, path]) => {
+        const nodo = xmlDocOriginal.querySelector(path);
+        if (!nodo) return;
+        const div = document.createElement('div');
+        div.style = 'margin-bottom: 6px;';
+        div.innerHTML = `<label><b>${label}:</b></label><input type="text" value="${nodo.textContent.trim()}" style="width: 100%;" data-node="${path}">`;
+        div.querySelector('input').oninput = function () {
+            xmlDocOriginal.querySelector(path).textContent = this.value.trim();
+        };
+        col2.appendChild(div);
+    });
+
+    // Columna Derecha
+    const col3 = document.createElement('div');
+    col3.style = 'flex: 1; min-width: 200px; max-width: 220px; margin-right: 50px;';
+
+    const campos3 = [
+        ['HP Máximo', 'hp > total'], ['Temp HP', 'temp'], ['Wounds', 'wounds'], ['Subdual', 'subdual'],
+        ['BAB', 'attackbonus > base'], ['Melee', 'attackbonus > melee > total'], ['Ranged', 'attackbonus > ranged > total'],
+        ['CMB', 'attackbonus > grapple > total'], ['CMD', 'cmd'], ['FF', 'ff'], ['Tch', 'touch'],
+        ['SR', 'sr'], ['Special Movement', 'specialmovement'], ['Notas', 'notes_main']
+    ];
+
+    campos3.forEach(([label, path]) => {
+        const nodo = xmlDocOriginal.querySelector(path);
+        if (!nodo) return;
+
+        const cont = document.createElement('div');
+        cont.style = 'margin-bottom: 6px;';
+
+        const lbl = document.createElement('label');
+        lbl.textContent = `${label}: `;
+        lbl.style = 'font-weight: bold;';
+
+        let input;
+        if (label === 'Notas') {
+            input = document.createElement('textarea');
+            input.rows = 3;
+            input.style = 'width: 100%;';
+        } else {
+            input = document.createElement('input');
+            input.type = 'text';
+            input.style = 'width: 100%;';
         }
 
-        function ocultarVistas() {
-            document.getElementById('vistaMain').style.display = 'none';
-            document.getElementById('vistaCombat')?.style.display = 'none';
-            document.getElementById('vistaSkills')?.style.display = 'none';
-            document.getElementById('vistaAbilities')?.style.display = 'none';
-            document.getElementById('vistaInventory')?.style.display = 'none';
-            document.getElementById('vistaNotes')?.style.display = 'none';
-            document.getElementById('vistaActions')?.style.display = 'none';
-        }
+        input.value = nodo.textContent.trim();
+        input.oninput = () => {
+            nodo.textContent = input.value.trim();
+        };
 
-        function mostrarVistaCombat() { ocultarVistas(); document.getElementById('vistaCombat')?.style.display = 'block'; }
-        function mostrarVistaSkills() { ocultarVistas(); document.getElementById('vistaSkills')?.style.display = 'block'; }
-        function mostrarVistaAbilities() { ocultarVistas(); document.getElementById('vistaAbilities')?.style.display = 'block'; }
-        function mostrarVistaInventory() { ocultarVistas(); document.getElementById('vistaInventory')?.style.display = 'block'; }
-        function mostrarVistaNotes() { ocultarVistas(); document.getElementById('vistaNotes')?.style.display = 'block'; }
-        function mostrarVistaActions() { ocultarVistas(); document.getElementById('vistaActions')?.style.display = 'block'; }
+        cont.appendChild(lbl);
+        cont.appendChild(input);
+        col3.appendChild(cont);
+    });
+
+    document.getElementById('vistaMain').style.display = 'block';
+    wrapper.appendChild(col1);
+    wrapper.appendChild(col2);
+    wrapper.appendChild(col3);
+    datosMain.appendChild(wrapper);
+    document.getElementById('vistaMain').style.display = 'block';
+}
+>>>>>>> a0d30447a0b2a341dfa158b9e61641751fe8c093
     </script>
 </body>
-
 </html>
