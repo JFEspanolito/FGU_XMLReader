@@ -34,6 +34,11 @@
         textarea {
             text-align: center;
         }
+
+        /* Centra cualquier <table> dentro del contenedor de Vista */
+        [id^="vista"] table {
+            margin: 0 auto;
+        }
     </style>
 </head>
 
@@ -73,6 +78,21 @@
     </div>
     <div id="vistaCombat" style="margin-top: 20px; display: none; text-align: center;">
         <div id="datosCombat"></div>
+    </div>
+    <div id="vistaSkills" style="margin-top: 20px; display: none; text-align: center;">
+        <div id="datosSkills"></div>
+    </div>
+    <div id="vistaAbilities" style="margin-top: 20px; display: none; text-align: center;">
+        <div id="datosAbilities"></div>
+    </div>
+    <div id="vistaInventory" style="margin-top: 20px; display: none; text-align: center;">
+        <div id="datosInventory"></div>
+    </div>
+    <div id="vistaNotes" style="margin-top: 20px; display: none; text-align: center;">
+        <div id="datosNotes"></div>
+    </div>
+    <div id="vistaActions" style="margin-top: 20px; display: none; text-align: center;">
+        <div id="datosActions"></div>
     </div>
 
     <script>
@@ -146,8 +166,20 @@
          * - Muestra únicamente el panel cuyo id coincide y oculta los demás
          */
         function cambiarVisibilidad(panelVisible) {
-            ["vistaMain", "vistaCombat"].forEach(function (id) {
-                document.getElementById(id).style.display = (id === panelVisible) ? "block" : "none";
+            const paneles = [
+                "vistaMain",
+                "vistaCombat",
+                "vistaSkills",
+                "vistaAbilities",
+                "vistaInventory",
+                "vistaNotes",
+                "vistaActions"
+            ];
+
+            paneles.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;                  // si no existe, lo ignoro
+                el.style.display = (id === panelVisible) ? "block" : "none";
             });
         }
 
@@ -230,41 +262,65 @@
             // Estadísticas de habilidad
             ["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"].forEach(stat => {
                 const st = xmlDocGlobal.querySelector(`character > abilities > ${stat}`);
-                const s = parseInt(st.querySelector("score").textContent);
-                const dmg = parseInt(st.querySelector("damage").textContent);
+                if (!st) return;
+                const scoreNode = st.querySelector("score");
+                const dmgNode = st.querySelector("damage");
+                const bonusNode = st.querySelector("bonus");
+
+                const s = parseInt(scoreNode?.textContent || "0");
+                const dmg = parseInt(dmgNode?.textContent || "0");
                 const mod = Math.floor((s - dmg - 10) / 2);
+
                 const wrapper = document.createElement("div");
                 wrapper.style = "display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 12px;";
+
                 // Label del stat (STR, DEX…)
                 const label = document.createElement("label");
                 label.innerHTML = `<b>${stat.substr(0, 3).toUpperCase()}</b>`;
                 wrapper.appendChild(label);
+
                 // Grid de Score / MOD / DMG
                 const grid = document.createElement("div");
                 grid.style = "display: grid; grid-template-columns: 50px 50px 50px; gap: 6px; text-align: center; font-size: 12px;";
                 grid.innerHTML = `<div>Score</div><div>MOD</div><div>DMG</div>`;
+
                 // Input Score
                 const score = document.createElement("input");
                 score.type = "number";
                 score.value = s;
                 score.style = "width: 50px;";
                 score.onchange = () => {
-                    xmlDocGlobal.querySelector(`character > abilities > ${stat} > score`).textContent = score.value;
-                    mostrarVistaMain(document.querySelector('.tab-button.active'));
+                    if (scoreNode) scoreNode.textContent = score.value;
+                    recalcularMod();
                 };
-                // Span MOD read-only
-                const modSpan = document.createElement("div");
-                modSpan.textContent = `${mod >= 0 ? "+" : ""}${mod}`;
-                modSpan.style = "line-height: 24px;";
+
                 // Input DMG
                 const dmgInput = document.createElement("input");
                 dmgInput.type = "number";
                 dmgInput.value = dmg;
                 dmgInput.style = "width: 50px;";
                 dmgInput.onchange = () => {
-                    xmlDocGlobal.querySelector(`character > abilities > ${stat} > damage`).textContent = dmgInput.value;
-                    mostrarVistaMain(document.querySelector('.tab-button.active'));
+                    if (dmgNode) dmgNode.textContent = dmgInput.value;
+                    if (scoreNode) scoreNode.textContent = score.value;
+                    recalcularMod();
                 };
+
+                // Span MOD read-only
+                const modSpan = document.createElement("div");
+                modSpan.style = "line-height: 24px;";
+
+                // Función para recalcular el MOD y actualizar el XML
+                function recalcularMod() {
+                    const sVal = parseInt(score.value || "0");
+                    const dmgVal = parseInt(dmgInput.value || "0");
+                    const modVal = Math.floor((sVal - dmgVal - 10) / 2);
+                    modSpan.textContent = `${modVal >= 0 ? "+" : ""}${modVal}`;
+                    if (bonusNode) bonusNode.textContent = modVal;
+                    if (scoreNode) scoreNode.textContent = sVal;
+                    if (dmgNode) dmgNode.textContent = dmgVal;
+                }
+                recalcularMod();
+
                 grid.append(score, modSpan, dmgInput);
                 wrapper.appendChild(grid);
                 center.appendChild(wrapper);
@@ -577,6 +633,113 @@
         }
 
         /**
+         * mostrarVistaSkills(btn)
+         * - Marca la pestaña Skills como activa
+         * - Oculta todos los paneles y muestra solo #vistaSkills
+         * - Rellena dinámicamente #datosSkills con una tabla de:
+         *     Habilidad, Ranks, Stat, Misc, Total
+         * @param {HTMLElement} btn — el botón de pestaña clicado
+         */
+        function mostrarVistaSkills(btn) {
+            if (!xmlDocGlobal) return;
+
+            // 1) Marca la pestaña activa
+            activarPestanaActiva(btn);
+
+            // 2) Limpia y rellena #datosSkills
+            const datos = document.getElementById('datosSkills');
+            datos.innerHTML = '';
+
+            const skills = xmlDocGlobal.querySelectorAll('character > skilllist > *');
+            if (skills.length === 0) {
+                datos.innerHTML = '<p>No se encontraron habilidades en el XML.</p>';
+                return;
+            }
+
+            const tabla = document.createElement('table');
+            tabla.style.margin = '0 auto';
+            tabla.innerHTML = `
+                <tr>
+                    <th>Habilidad</th>
+                    <th>Ranks</th>
+                    <th>Stat</th>
+                    <th>Misc</th>
+                    <th>Total</th>
+                </tr>
+            `;
+
+            skills.forEach(skillNode => {
+                const fila = document.createElement('tr');
+                // Obtén el label y sublabel si existe
+                const label = skillNode.querySelector('label')?.textContent || skillNode.nodeName;
+                const sublabel = skillNode.querySelector('sublabel')?.textContent;
+                const nombre = sublabel ? `${label} (${sublabel})` : label;
+                fila.appendChild(Object.assign(document.createElement('td'), { textContent: nombre }));
+
+                // --- Inputs editables ---
+                // Ranks
+                const ranksNode = skillNode.querySelector('ranks');
+                const ranksCell = document.createElement('td');
+                const ranksInput = document.createElement('input');
+                ranksInput.type = 'number';
+                ranksInput.style.width = '60px';
+                ranksInput.value = ranksNode?.textContent.trim() || "0";
+                ranksCell.appendChild(ranksInput);
+                fila.appendChild(ranksCell);
+
+                // Stat
+                const statNode = skillNode.querySelector('stat');
+                const statCell = document.createElement('td');
+                const statInput = document.createElement('input');
+                statInput.type = 'number';
+                statInput.style.width = '60px';
+                statInput.value = statNode?.textContent.trim() || "0";
+                statCell.appendChild(statInput);
+                fila.appendChild(statCell);
+
+                // Misc
+                const miscNode = skillNode.querySelector('misc');
+                const miscCell = document.createElement('td');
+                const miscInput = document.createElement('input');
+                miscInput.type = 'number';
+                miscInput.style.width = '60px';
+                miscInput.value = miscNode?.textContent.trim() || "0";
+                miscCell.appendChild(miscInput);
+                fila.appendChild(miscCell);
+
+                // Total (readonly, suma automática)
+                const totalNode = skillNode.querySelector('total');
+                const totalCell = document.createElement('td');
+                const totalInput = document.createElement('input');
+                totalInput.type = 'number';
+                totalInput.style.width = '60px';
+                totalInput.readOnly = true;
+                // Función para recalcular el total
+                function recalcularTotal() {
+                    const suma =
+                        parseInt(ranksInput.value || "0") +
+                        parseInt(statInput.value || "0") +
+                        parseInt(miscInput.value || "0");
+                    totalInput.value = suma;
+                    if (totalNode) totalNode.textContent = suma;
+                }
+                // Inicializa el valor
+                recalcularTotal();
+                // Al cambiar cualquier input, recalcula
+                ranksInput.oninput = () => { if (ranksNode) ranksNode.textContent = ranksInput.value; recalcularTotal(); };
+                statInput.oninput = () => { if (statNode) statNode.textContent = statInput.value; recalcularTotal(); };
+                miscInput.oninput = () => { if (miscNode) miscNode.textContent = miscInput.value; recalcularTotal(); };
+                totalCell.appendChild(totalInput);
+                fila.appendChild(totalCell);
+
+                tabla.appendChild(fila);
+            });
+
+            datos.appendChild(tabla);
+            cambiarVisibilidad('vistaSkills');
+        }
+
+        /**
          * crearGrupoSuma(label, totalPath, componentes, dividirDesde)
          * - Crea un bloque que muestra:
          *   • Un título (<b>label</b>)
@@ -589,89 +752,73 @@
             const wrapper = document.createElement("div");
             wrapper.style = "margin-bottom:24px; text-align:center;";
 
-            // 1) Título en negrita
             const lbl = document.createElement("div");
             lbl.innerHTML = `<b>${label}</b>`;
             wrapper.appendChild(lbl);
 
-            // 2) nodo XML del Total
             const totalNode = xmlDocGlobal.querySelector(totalPath);
-            const totalVal = totalNode?.textContent.trim() || "0";
 
-            // 3) input readonly para el total
-            const inputTotal = document.createElement("input");
-            inputTotal.type = "number";
-            inputTotal.readOnly = true;
-            inputTotal.style = "width:50px; text-align:center;";
-            inputTotal.value = totalVal;
-
-            // 4) inputs de componentes
+            // Inputs de componentes
             const compInputs = componentes.map(([_, path]) => {
                 const node = xmlDocGlobal.querySelector(path);
                 const inp = document.createElement("input");
                 inp.type = "number";
                 inp.style = "width:50px; text-align:center;";
                 inp.value = node?.textContent.trim() || "0";
-                // Al cambiar, actualiza nodo XML y recalcula el total
                 inp.oninput = () => {
                     if (node) node.textContent = inp.value;
-                    // suma ambos grupos
-                    const suma1 = compInputs
-                        .slice(0, dividirDesde || compInputs.length)
-                        .reduce((s, i) => s + parseInt(i.value || "0"), 0);
-                    const suma2 = compInputs
-                        .slice(dividirDesde || compInputs.length)
-                        .reduce((s, i) => s + parseInt(i.value || "0"), 0);
-                    const nuevaTotal = suma1 + suma2;
-                    inputTotal.value = nuevaTotal;
-                    if (totalNode) totalNode.textContent = nuevaTotal;
+                    recalcularTotal();
+                    actualizarTodosLosTotales();
                 };
                 return inp;
             });
 
-            // 5) función interna para pintar un grid de etiquetas + inputs
-            function pintaGrid(inputsArray) {
-                const cols = 1 + inputsArray.length; // total + cada input
-                const grid = document.createElement("div");
-                grid.style = `
-      display: grid;
-      grid-template-columns: repeat(${cols}, 50px);
-      gap: 6px;
-      justify-content: center;
-      margin-top: 4px;
-    `;
-                // Fila de sublabels
-                grid.appendChild(Object.assign(document.createElement("div"), { textContent: "Total", style: "font-size:12px;" }));
-                componentes
-                    .slice(
-                        inputsArray === compInputs ? 0 : dividirDesde,
-                        inputsArray === compInputs ? componentes.length : componentes.length
-                    )
-                    .forEach(([subLbl]) => {
-                        grid.appendChild(Object.assign(document.createElement("div"), {
-                            textContent: subLbl,
-                            style: "font-size:12px;"
-                        }));
-                    });
-                // Fila de inputs
-                grid.appendChild(inputTotal);
-                inputsArray.forEach(i => grid.appendChild(i));
-                wrapper.appendChild(grid);
+            // Input Total (solo una vez)
+            const inputTotal = document.createElement("input");
+            inputTotal.type = "number";
+            inputTotal.readOnly = true;
+            inputTotal.style = "width:50px; text-align:center;";
+
+            // Función para recalcular el total
+            function recalcularTotal() {
+                const suma = compInputs.reduce((s, i) => s + parseInt(i.value || "0"), 0);
+                inputTotal.value = suma;
+                if (totalNode) totalNode.textContent = suma;
             }
 
-            // 6) Pintar filas según divisón
-            if (dividirDesde && dividirDesde < componentes.length) {
-                pintaGrid(compInputs.slice(0, dividirDesde));
-                pintaGrid(compInputs.slice(dividirDesde));
-            } else {
-                pintaGrid(compInputs);
+            function actualizarTodosLosTotales() {
+                document.querySelectorAll('[data-grupo-suma]').forEach(div => {
+                    if (div.recalcularTotal) div.recalcularTotal();
+                });
             }
+
+            // Divide en dos filas, pero solo un Total y un Misc
+            const fila1 = document.createElement("div");
+            fila1.style = "display: grid; grid-template-columns: 50px repeat(" + dividirDesde + ", 50px); gap: 6px; justify-content: center; margin-top: 4px;";
+            fila1.appendChild(Object.assign(document.createElement("div"), { textContent: "Total", style: "font-size:12px;" }));
+            componentes.slice(0, dividirDesde).forEach(([subLbl]) => {
+                fila1.appendChild(Object.assign(document.createElement("div"), { textContent: subLbl, style: "font-size:12px;" }));
+            });
+            fila1.appendChild(inputTotal);
+            compInputs.slice(0, dividirDesde).forEach(i => fila1.appendChild(i));
+            wrapper.appendChild(fila1);
+
+            const fila2 = document.createElement("div");
+            fila2.style = "display: grid; grid-template-columns: repeat(" + (componentes.length - dividirDesde) + ", 50px); gap: 6px; justify-content: center; margin-top: 4px;";
+            componentes.slice(dividirDesde).forEach(([subLbl]) => {
+                fila2.appendChild(Object.assign(document.createElement("div"), { textContent: subLbl, style: "font-size:12px;" }));
+            });
+            compInputs.slice(dividirDesde).forEach(i => fila2.appendChild(i));
+            wrapper.appendChild(fila2);
+
+            wrapper.dataset.grupoSuma = "1";
+            wrapper.recalcularTotal = recalcularTotal;
+            recalcularTotal();
 
             return wrapper;
         }
 
         // Pestañas aún no implementadas (alerta placeholder)
-        function mostrarVistaSkills(btn) { alert("Skills no implementado."); }
         function mostrarVistaAbilities(btn) { alert("Abilities no implementado."); }
         function mostrarVistaInventory(btn) { alert("Inventory no implementado."); }
         function mostrarVistaNotes(btn) { alert("Notes no implementado."); }
