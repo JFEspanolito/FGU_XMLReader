@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>FGU Character Editor - Pathfinder 1e</title>
+    <style>
+        /* Estilos de los botones de pestañas */
+        .tab-button {
+            background-color: #808080;
+            color: black;
+            border: 2px solid #333;
+            border-radius: 5px 5px 0 0;
+            padding: 6px 12px;
+            margin-right: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .tab-button.active {
+            background-color: #808080;
+            color: white;
+        }
+
+        .tab-button:hover {
+            filter: brightness(1.2);
+        }
+
+        /* Centrar texto en todos los input y textarea */
+        input,
+        textarea {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Título principal -->
+    <h1 style="text-align: center; width: 100%;">Editor de XML para Pathfinder 1e de FGU</h1>
+
+    <!-- Zona de import/export de XML -->
+    <div style="display: flex; justify-content: space-between; max-width: 600px; margin: 0 auto;">
+        <!-- Botón para cargar archivo -->
+        <div>
+            <button onclick="document.getElementById('fileInput').click()">Importar XML</button>
+            <input type="file" id="fileInput" accept=".xml" style="display:none" onchange="importarXML()">
+        </div>
+        <!-- Nombre del archivo actualmente cargado -->
+        <div>
+            <div id="nombreArchivoXML"></div>
+        </div>
+        <!-- Botón para descargar XML modificado -->
+        <div><button onclick="exportarXML()">Exportar XML</button></div>
+    </div>
+
+    <!-- Pestañas de navegación (inicialmente ocultas) -->
+    <div id="tabPanel" style="margin-top:20px; display:none; text-align:center;">
+        <button class="tab-button" onclick="mostrarVistaMain(this)">Main</button>
+        <button class="tab-button" onclick="mostrarVistaCombat(this)">Combat</button>
+        <button class="tab-button" onclick="mostrarVistaSkills(this)">Skills</button>
+        <button class="tab-button" onclick="mostrarVistaAbilities(this)">Abilities</button>
+        <button class="tab-button" onclick="mostrarVistaInventory(this)">Inventory</button>
+        <button class="tab-button" onclick="mostrarVistaNotes(this)">Notes</button>
+        <button class="tab-button" onclick="mostrarVistaActions(this)">Actions</button>
+    </div>
+
+    <!-- Paneles de contenido de cada pestaña (ocultos hasta activarse) -->
+    <div id="vistaMain" style="margin-top:20px; display:none; justify-content: center; text-align: center;">
+        <div id="datosMain"></div>
+    </div>
+    <div id="vistaCombat" style="margin-top: 20px; display: none; text-align: center;">
+        <div id="datosCombat"></div>
+    </div>
+
+    <script>
+        // Variable global que guarda el XML cargado
+        let xmlDocGlobal = null;
+
+        // Al cargar la página, habilita clic sobre el nombre de archivo para reload
+        document.addEventListener("DOMContentLoaded", () => {
+            const nombreDiv = document.getElementById("nombreArchivoXML");
+            nombreDiv.style.cursor = "pointer";
+            nombreDiv.title = "Haz clic para limpiar la pantalla";
+            nombreDiv.style.color = 'blue';
+            nombreDiv.addEventListener("click", () => {
+                if (confirm("¿Deseas limpiar pantalla?")) {
+                    location.reload();
+                }
+            });
+        });
+
+        /**
+         * importarXML()
+         * - Abre un FileReader para leer el XML
+         * - Parsealo a DOM y lo guarda en xmlDocGlobal
+         * - Muestra el nombre del archivo cargado
+         * - Hace visible el panel de pestañas y llama a mostrarVistaMain()
+         */
+        function importarXML() {
+            const input = document.getElementById("fileInput");
+            const file = input.files[0];
+            if (!file) return;
+            const fr = new FileReader();
+            fr.onload = e => {
+                console.log("[LOG] carga: " + file.name);
+                xmlDocGlobal = new DOMParser().parseFromString(e.target.result, "application/xml");
+                document.getElementById("nombreArchivoXML").textContent = file.name;
+                document.getElementById("tabPanel").style.display = "block";
+                // Muestra la pestaña Main por defecto
+                mostrarVistaMain(document.querySelector(".tab-button"));
+            };
+            fr.readAsText(file);
+        }
+
+        /**
+         * exportarXML()
+         * - Serializa xmlDocGlobal a texto
+         * - Crea un Blob y fuerza la descarga como personaje.xml
+         */
+        function exportarXML() {
+            if (!xmlDocGlobal) { alert("No hay XML cargado."); return; }
+            const xml = new XMLSerializer().serializeToString(xmlDocGlobal);
+            const blob = new Blob([xml], { type: "application/xml" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "personaje.xml";
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+
+        /**
+         * activarPestanaActiva(btn)
+         * - Quita la clase .active de todas las pestañas
+         * - Añade .active a la que se clicó
+         */
+        function activarPestanaActiva(btn) {
+            document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
+            if (btn) btn.classList.add("active");
+        }
+
+        /**
+         * cambiarVisibilidad(panelVisible)
+         * - Muestra únicamente el panel cuyo id coincide y oculta los demás
+         */
+        function cambiarVisibilidad(panelVisible) {
+            ["vistaMain", "vistaCombat"].forEach(function (id) {
+                document.getElementById(id).style.display = (id === panelVisible) ? "block" : "none";
+            });
+        }
+
+        /**
+         * crearCampo(label, path, ancho)
+         * - Crea un <div> con <label> y <input>
+         * - label: texto del <label>
+         * - path: XPath al nodo XML donde se lee/graba value
+         * - ancho: CSS width para el input
+         */
+        function crearCampo(label, path, ancho = "100%") {
+            const node = xmlDocGlobal.querySelector(path);
+            if (!node) return null;
+            const contenedor = document.createElement("div");
+            contenedor.style = "display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 8px;";
+            // Etiqueta
+            const lbl = document.createElement("label");
+            lbl.textContent = label;
+            lbl.style = "font-weight: bold; font-size: 13px; margin-bottom: 2px;";
+            contenedor.appendChild(lbl);
+            // Input de texto
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = node.textContent.trim();
+            input.dataset.path = path;
+            input.style = `width: ${ancho};`;
+            // Sincronizar cambios con el XML
+            input.oninput = () => { node.textContent = input.value; };
+            contenedor.appendChild(input);
+            return contenedor;
+        }
+
+        /**
+         * mostrarVistaMain(btn)
+         * - Construye dinámicamente los campos de la pestaña Main
+         * - Usa crearCampo() para cada dato de personaje (nombre, edad, stats, etc.)
+         * - Para stats: recalcula el mod y refresca al cambiar score o damage
+         * - Finalmente muestra el panel y oculta los demás
+         */
+        function mostrarVistaMain(btn) {
+            if (!xmlDocGlobal) return;
+            activarPestanaActiva(btn);
+
+            const container = document.getElementById("datosMain");
+            container.innerHTML = "";
+
+            // Wrapper principal con layout flexbox
+            const w = document.createElement("div");
+            w.style = 'display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;';
+
+            // Columna izquierda: datos básicos
+            const left = document.createElement("div");
+            left.style = "flex:1; min-width:200px; max-width:220px;";
+            [
+                ["Nombre", "character > name"],
+                ["Género", "character > gender"],
+                ["Edad", "character > age"],
+                ["Altura", "character > height"],
+                ["Peso", "character > weight"],
+                ["Tamaño", "character > size"],
+                ["Alineación", "character > alignment"],
+                ["Deidad", "character > deity"],
+                ["Raza", "character > race"],
+                ["Clase", "character > classes > id-00001 > name"],
+                ["Nivel", "character > classes > id-00001 > level"],
+                ["Damage Reduction", "character > defenses > damagereduction"],
+                ["Resistances", "character > defenses > resistances"],
+                ["Immunities", "character > defenses > immunities"],
+                ["Special Qualities", "character > defenses > specialqualities"],
+                ["Sentidos", "character > senses"]
+            ].forEach(([lbl, path]) => {
+                const campo = crearCampo(lbl, path);
+                if (campo) left.appendChild(campo);
+            });
+
+            // Columna central: atributos y saves, AC, initiative, etc.
+            const center = document.createElement("div");
+            center.style = "flex:1; min-width:200px; max-width:220px;";
+
+            // Estadísticas de habilidad
+            ["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"].forEach(stat => {
+                const st = xmlDocGlobal.querySelector(`character > abilities > ${stat}`);
+                const s = parseInt(st.querySelector("score").textContent);
+                const dmg = parseInt(st.querySelector("damage").textContent);
+                const mod = Math.floor((s - dmg - 10) / 2);
+                const wrapper = document.createElement("div");
+                wrapper.style = "display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 12px;";
+                // Label del stat (STR, DEX…)
+                const label = document.createElement("label");
+                label.innerHTML = `<b>${stat.substr(0, 3).toUpperCase()}</b>`;
+                wrapper.appendChild(label);
+                // Grid de Score / MOD / DMG
+                const grid = document.createElement("div");
+                grid.style = "display: grid; grid-template-columns: 50px 50px 50px; gap: 6px; text-align: center; font-size: 12px;";
+                grid.innerHTML = `<div>Score</div><div>MOD</div><div>DMG</div>`;
+                // Input Score
+                const score = document.createElement("input");
+                score.type = "number";
+                score.value = s;
+                score.style = "width: 50px;";
+                score.onchange = () => {
+                    xmlDocGlobal.querySelector(`character > abilities > ${stat} > score`).textContent = score.value;
+                    mostrarVistaMain(document.querySelector('.tab-button.active'));
+                };
+                // Span MOD read-only
+                const modSpan = document.createElement("div");
+                modSpan.textContent = `${mod >= 0 ? "+" : ""}${mod}`;
+                modSpan.style = "line-height: 24px;";
+                // Input DMG
+                const dmgInput = document.createElement("input");
+                dmgInput.type = "number";
+                dmgInput.value = dmg;
+                dmgInput.style = "width: 50px;";
+                dmgInput.onchange = () => {
+                    xmlDocGlobal.querySelector(`character > abilities > ${stat} > damage`).textContent = dmgInput.value;
+                    mostrarVistaMain(document.querySelector('.tab-button.active'));
+                };
+                grid.append(score, modSpan, dmgInput);
+                wrapper.appendChild(grid);
+                center.appendChild(wrapper);
+            });
+
+            // Otros campos centrales (AC, saves, speed…)
+            [
+                ["Init", "character > initiative > total"],
+                ["AC", "character > ac > totals > general"],
+                ["FF", "character > ac > totals > flatfooted"],
+                ["Tch", "character > ac > totals > touch"],
+                ["CMD", "character > ac > totals > cmd"],
+                ["Fort", "character > saves > fortitude > total"],
+                ["Ref", "character > saves > reflex > total"],
+                ["Will", "character > saves > will > total"],
+                ["SR", "character > defenses > sr > total"],
+                ["Speed", "character > speed > total"],
+                ["Special Movement", "character > speed > special"]
+            ].forEach(([lbl, path]) => {
+                const campo = crearCampo(lbl, path, "200px");
+                if (campo) center.appendChild(campo);
+            });
+
+            // Columna derecha: HP, BAB y ataques
+            const right = document.createElement("div");
+            right.style = "flex:1; min-width:200px; max-width:220px;";
+            [
+                ["Current HP", "character > hp > total"],
+                ["HP Actual", "character > hp > current"],
+                ["Temp HP", "character > hp > temporary"],
+                ["Wounds", "character > hp > wounds"],
+                ["Subdual", "character > hp > nonlethal"],
+                ["BAB", "character > attackbonus > base"],
+                ["Melee", "character > attackbonus > melee > total"],
+                ["Ranged", "character > attackbonus > ranged > total"],
+                ["CMB", "character > attackbonus > grapple > total"]
+            ].forEach(([lbl, path]) => {
+                const campo = crearCampo(lbl, path);
+                if (campo) right.appendChild(campo);
+            });
+
+            // Campo de Notas multilinea
+            const notasNode = xmlDocGlobal.querySelector("character > notes_main");
+            if (notasNode) {
+                const cont = document.createElement("div");
+                cont.style = "display: flex; flex-direction: column; align-items: flex-start; margin-top: 12px;";
+                const lbl = document.createElement("label");
+                lbl.textContent = "Notas";
+                lbl.style = "font-weight: bold;";
+                const ta = document.createElement("textarea");
+                ta.rows = 3;
+                ta.style = "width: 100%;";
+                ta.value = notasNode.textContent.trim();
+                ta.oninput = () => { notasNode.textContent = ta.value; };
+                cont.append(lbl, ta);
+                right.appendChild(cont);
+            }
+
+            // Montar columnas en el wrapper y mostrar
+            w.append(left, center, right);
+            container.appendChild(w);
+            cambiarVisibilidad("vistaMain");
+        }
+
+        /**
+         * mostrarVistaCombat(btn)
+         * - Monta los bloques de suma (AC, saves, BAB…) llamando a crearGrupoSuma()
+         */
+        function mostrarVistaCombat(btn) {
+            if (!xmlDocGlobal) return;
+            activarPestanaActiva(btn);
+
+            const container = document.getElementById("datosCombat");
+            container.innerHTML = "";
+
+            // Wrapper de 3 columnas
+            const w = document.createElement("div");
+            w.style = 'display: flex; justify-content: center; gap: 50px; flex-wrap: wrap;';
+            const [left, center, right] = [0, 1, 2].map(_ => {
+                const col = document.createElement("div");
+                col.style = "flex:1; min-width:220px; max-width:260px;";
+                return col;
+            });
+
+            // -----------------------------------------------------------------------------
+            // COLUMNA IZQUIERDA (left): todos los bloques de AC y CMD
+            // -----------------------------------------------------------------------------
+
+            // 1) “AC” (Armor Class) – muestra el total de AC y el desglose en:
+            //    Armor, Shield, Stat (modificador de Destreza), Size, Natural Armor, Deflection,
+            //    Dodge y Misc.
+            //    El parámetro dividirDesde = 4 indica que tras los primeros 4 componentes
+            //    creamos un segundo grid para evitar que quede muy estrecho.
+            // -----------------------------------------------------------------------------
+            left.appendChild(
+                crearGrupoSuma(
+                    "AC",                                          // Título del bloque
+                    "character > ac > totals > general",          // Path al nodo XML del total
+                    [
+                        ["Armor", "character > ac > sources > armor"],
+                        ["Shield", "character > ac > sources > shield"],
+                        ["Stat", "character > ac > sources > abilitymod"],
+                        ["Size", "character > ac > sources > size"],
+                        ["Nat", "character > ac > sources > naturalarmor"],
+                        ["Def", "character > ac > sources > deflection"],
+                        ["Dodge", "character > ac > sources > dodge"],
+                        ["Misc", "character > ac > sources > misc"]
+                    ],
+                    4  // número de inputs antes de “dividir” en dos filas
+                )
+            );
+
+            // 2) “Flat-Footed AC” – AC cuando estás desprevenido (flat-footed).
+            //    Total en character > ac > totals > flatfooted, desglosado en Armor,
+            //    Shield, Size y el campo específico ffmisc.
+            // -----------------------------------------------------------------------------
+            left.appendChild(
+                crearGrupoSuma(
+                    "Flat-Footed AC",
+                    "character > ac > totals > flatfooted",
+                    [
+                        ["Armor", "character > ac > sources > armor"],
+                        ["Shield", "character > ac > sources > shield"],
+                        ["Size", "character > ac > sources > size"],
+                        ["Misc", "character > ac > sources > ffmisc"]
+                    ]
+                )
+            );
+
+            // 3) “Touch AC” – AC de toque (ignora Armor y Natural), desglosado en:
+            //    Stat, Size y touchmisc.
+            // -----------------------------------------------------------------------------
+            left.appendChild(
+                crearGrupoSuma(
+                    "Touch AC",
+                    "character > ac > totals > touch",
+                    [
+                        ["Stat", "character > ac > sources > abilitymod"],
+                        ["Size", "character > ac > sources > size"],
+                        ["Misc", "character > ac > sources > touchmisc"]
+                    ]
+                )
+            );
+
+            // 4) “CMD” (Combat Maneuver Defense) – muestra CMD total y su desglose en
+            //    BAB, Stat (modificador de Fuerza o Destreza), Size (cmdbasemod) y misc.
+            // -----------------------------------------------------------------------------
+            left.appendChild(
+                crearGrupoSuma(
+                    "CMD",
+                    "character > ac > totals > cmd",
+                    [
+                        ["BAB", "character > attackbonus > base"],
+                        ["Stat", "character > ac > sources > cmdabilitymod"],
+                        ["Size", "character > ac > sources > cmdbasemod"],
+                        ["Misc", "character > ac > sources > cmdmisc"]
+                    ]
+                )
+            );
+
+
+            // -----------------------------------------------------------------------------
+            // COLUMNA CENTRAL (center): todos los bloques de salvaciones
+            // -----------------------------------------------------------------------------
+
+            // 5) “Fortitude” – Salvación de Fortaleza (Fort), desglosada en Class,
+            //    Stat y Misc.
+            // -----------------------------------------------------------------------------
+            center.appendChild(
+                crearGrupoSuma(
+                    "Fortitude",
+                    "character > saves > fortitude > total",
+                    [
+                        ["Class", "character > saves > fortitude > base"],
+                        ["Stat", "character > saves > fortitude > abilitymod"],
+                        ["Misc", "character > saves > fortitude > misc"]
+                    ]
+                )
+            );
+
+            // 6) “Reflex” – Salvación de Reflejos (Reflex), con Class, Stat y Misc.
+            // -----------------------------------------------------------------------------
+            center.appendChild(
+                crearGrupoSuma(
+                    "Reflex",
+                    "character > saves > reflex > total",
+                    [
+                        ["Class", "character > saves > reflex > base"],
+                        ["Stat", "character > saves > reflex > abilitymod"],
+                        ["Misc", "character > saves > reflex > misc"]
+                    ]
+                )
+            );
+
+            // 7) “Will” – Salvación de Voluntad (Will), con Class, Stat y Misc.
+            // -----------------------------------------------------------------------------
+            center.appendChild(
+                crearGrupoSuma(
+                    "Will",
+                    "character > saves > will > total",
+                    [
+                        ["Class", "character > saves > will > base"],
+                        ["Stat", "character > saves > will > abilitymod"],
+                        ["Misc", "character > saves > will > misc"]
+                    ]
+                )
+            );
+
+
+            // -----------------------------------------------------------------------------
+            // COLUMNA DERECHA (right): SR, Speed, Initiative, BAB y Attack Bonuses
+            // -----------------------------------------------------------------------------
+
+            // 8) “SR” – Spell Resistance, con Base y Misc.
+            // -----------------------------------------------------------------------------
+            right.appendChild(
+                crearGrupoSuma(
+                    "SR",
+                    "character > defenses > sr > total",
+                    [
+                        ["Base", "character > defenses > sr > base"],
+                        ["Misc", "character > defenses > sr > misc"]
+                    ]
+                )
+            );
+
+            // 9) “Speed” – Velocidad, total y desglose en Base, Armor y Misc.
+            // -----------------------------------------------------------------------------
+            right.appendChild(
+                crearGrupoSuma(
+                    "Speed",
+                    "character > speed > total",
+                    [
+                        ["Base", "character > speed > base"],
+                        ["Armor", "character > speed > armor"],
+                        ["Misc", "character > speed > misc"]
+                    ]
+                )
+            );
+
+            // 10) “Initiative” – Iniciativa, total y desglose en Stat y Misc.
+            // -----------------------------------------------------------------------------
+            right.appendChild(
+                crearGrupoSuma(
+                    "Initiative",
+                    "character > initiative > total",
+                    [
+                        ["Stat", "character > initiative > abilitymod"],
+                        ["Misc", "character > initiative > misc"]
+                    ]
+                )
+            );
+
+            // 11) “BAB” – Base Attack Bonus (sin desglose adicional).
+            // -----------------------------------------------------------------------------
+            right.appendChild(
+                crearGrupoSuma(
+                    "BAB",
+                    "character > attackbonus > base",
+                    []
+                )
+            );
+
+            // 12) “Melee” – Attack Bonus cuerpo a cuerpo, total y desglose en Stat, Size y Misc.
+            // -----------------------------------------------------------------------------
+            right.appendChild(
+                crearGrupoSuma(
+                    "Melee",
+                    "character > attackbonus > melee > total",
+                    [
+                        ["Stat", "character > attackbonus > melee > abilitymod"],
+                        ["Size", "character > attackbonus > melee > size"],
+                        ["Misc", "character > attackbonus > melee > misc"]
+                    ]
+                )
+            );
+
+            // 13) “Ranged” – Attack Bonus a distancia, total y desglose en Stat, Size y Misc.
+            // -----------------------------------------------------------------------------
+            right.appendChild(
+                crearGrupoSuma(
+                    "Ranged",
+                    "character > attackbonus > ranged > total",
+                    [
+                        ["Stat", "character > attackbonus > ranged > abilitymod"],
+                        ["Size", "character > attackbonus > ranged > size"],
+                        ["Misc", "character > attackbonus > ranged > misc"]
+                    ]
+                )
+            );
+
+            // 14) “CMB” – Combat Maneuver Bonus, total y desglose en Stat, Size y Misc.
+            // -----------------------------------------------------------------------------
+            right.appendChild(
+                crearGrupoSuma(
+                    "CMB",
+                    "character > attackbonus > grapple > total",
+                    [
+                        ["Stat", "character > attackbonus > grapple > abilitymod"],
+                        ["Size", "character > attackbonus > grapple > size"],
+                        ["Misc", "character > attackbonus > grapple > misc"]
+                    ]
+                )
+            );
+
+            // Ensambla columnas y muestra
+            w.append(left, center, right);
+            container.appendChild(w);
+            cambiarVisibilidad("vistaCombat");
+        }
+
+        /**
+         * crearGrupoSuma(label, totalPath, componentes, dividirDesde)
+         * - Crea un bloque que muestra:
+         *   • Un título (<b>label</b>)
+         *   • Un input readonly con el Total (path = totalPath)
+         *   • Inputs editables para cada componente (array de [subLabel, path])
+         *   • Si dividirDesde se define, coloca componentes en 2 filas
+         * - Cada vez que cambias un componente, recalcula la suma y actualiza el XML y el Total
+         */
+        function crearGrupoSuma(label, totalPath, componentes, dividirDesde = null) {
+            const wrapper = document.createElement("div");
+            wrapper.style = "margin-bottom:24px; text-align:center;";
+
+            // 1) Título en negrita
+            const lbl = document.createElement("div");
+            lbl.innerHTML = `<b>${label}</b>`;
+            wrapper.appendChild(lbl);
+
+            // 2) nodo XML del Total
+            const totalNode = xmlDocGlobal.querySelector(totalPath);
+            const totalVal = totalNode?.textContent.trim() || "0";
+
+            // 3) input readonly para el total
+            const inputTotal = document.createElement("input");
+            inputTotal.type = "number";
+            inputTotal.readOnly = true;
+            inputTotal.style = "width:50px; text-align:center;";
+            inputTotal.value = totalVal;
+
+            // 4) inputs de componentes
+            const compInputs = componentes.map(([_, path]) => {
+                const node = xmlDocGlobal.querySelector(path);
+                const inp = document.createElement("input");
+                inp.type = "number";
+                inp.style = "width:50px; text-align:center;";
+                inp.value = node?.textContent.trim() || "0";
+                // Al cambiar, actualiza nodo XML y recalcula el total
+                inp.oninput = () => {
+                    if (node) node.textContent = inp.value;
+                    // suma ambos grupos
+                    const suma1 = compInputs
+                        .slice(0, dividirDesde || compInputs.length)
+                        .reduce((s, i) => s + parseInt(i.value || "0"), 0);
+                    const suma2 = compInputs
+                        .slice(dividirDesde || compInputs.length)
+                        .reduce((s, i) => s + parseInt(i.value || "0"), 0);
+                    const nuevaTotal = suma1 + suma2;
+                    inputTotal.value = nuevaTotal;
+                    if (totalNode) totalNode.textContent = nuevaTotal;
+                };
+                return inp;
+            });
+
+            // 5) función interna para pintar un grid de etiquetas + inputs
+            function pintaGrid(inputsArray) {
+                const cols = 1 + inputsArray.length; // total + cada input
+                const grid = document.createElement("div");
+                grid.style = `
+      display: grid;
+      grid-template-columns: repeat(${cols}, 50px);
+      gap: 6px;
+      justify-content: center;
+      margin-top: 4px;
+    `;
+                // Fila de sublabels
+                grid.appendChild(Object.assign(document.createElement("div"), { textContent: "Total", style: "font-size:12px;" }));
+                componentes
+                    .slice(
+                        inputsArray === compInputs ? 0 : dividirDesde,
+                        inputsArray === compInputs ? componentes.length : componentes.length
+                    )
+                    .forEach(([subLbl]) => {
+                        grid.appendChild(Object.assign(document.createElement("div"), {
+                            textContent: subLbl,
+                            style: "font-size:12px;"
+                        }));
+                    });
+                // Fila de inputs
+                grid.appendChild(inputTotal);
+                inputsArray.forEach(i => grid.appendChild(i));
+                wrapper.appendChild(grid);
+            }
+
+            // 6) Pintar filas según divisón
+            if (dividirDesde && dividirDesde < componentes.length) {
+                pintaGrid(compInputs.slice(0, dividirDesde));
+                pintaGrid(compInputs.slice(dividirDesde));
+            } else {
+                pintaGrid(compInputs);
+            }
+
+            return wrapper;
+        }
+
+        // Pestañas aún no implementadas (alerta placeholder)
+        function mostrarVistaSkills(btn) { alert("Skills no implementado."); }
+        function mostrarVistaAbilities(btn) { alert("Abilities no implementado."); }
+        function mostrarVistaInventory(btn) { alert("Inventory no implementado."); }
+        function mostrarVistaNotes(btn) { alert("Notes no implementado."); }
+        function mostrarVistaActions(btn) { alert("Actions no implementado."); }
+    </script>
+</body>
+
+</html>
