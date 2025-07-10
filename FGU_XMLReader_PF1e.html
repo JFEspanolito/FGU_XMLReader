@@ -996,6 +996,89 @@
         }
 
         /**
+         * mostrarVistaNotes(btn)
+         * - Activa la pestaña activa según el botón pulsado.
+         * - Limpia el contenedor datosNotes.
+         * - Crea un wrapper con estilo y añade campos para Appearance, Languages y Notes.
+         * - Appearance: textarea editable que actualiza el nodo XML.
+         * - Languages: lista de inputs editables para cada lenguaje encontrado en el XML.
+         * - Notes: textarea editable que actualiza el nodo XML.
+         * - Añade todo al contenedor y llama a cambiarVisibilidad("vistaNotes") para mostrar esta vista.
+         */
+        function mostrarVistaNotes(btn) {
+            activarPestanaActiva(btn);
+            const container = document.getElementById("datosNotes");
+            container.innerHTML = "";
+
+            // Wrapper general
+            const wrapper = document.createElement("div");
+            wrapper.style = "display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; align-items: flex-start; max-width:900px; margin:0 auto;";
+
+            // --- Appearance ---
+            const appearanceNode = xmlDocGlobal?.querySelector("character > appearance");
+            const appearanceBox = document.createElement("div");
+            appearanceBox.style = "flex:2; min-width:320px; max-width:480px; background:#f9f6f2; border:2px solid #bba; border-radius:10px; padding:10px; margin-bottom:12px;";
+            const appearanceLabel = document.createElement("div");
+            appearanceLabel.innerHTML = "<b>Appearance</b>";
+            appearanceLabel.style = "text-align:center; font-size:18px; margin-bottom:4px;";
+            appearanceBox.appendChild(appearanceLabel);
+            const appearanceTA = document.createElement("textarea");
+            appearanceTA.style = "width:100%; min-height:90px; font-size:15px; background:transparent; border:none; resize:vertical; outline:none;";
+            appearanceTA.value = (appearanceNode?.textContent || "").trim();
+            appearanceTA.oninput = () => { if (appearanceNode) appearanceNode.textContent = appearanceTA.value; };
+            appearanceBox.appendChild(appearanceTA);
+
+            // --- Languages ---
+            const langBox = document.createElement("div");
+            langBox.style = "flex:1; min-width:180px; max-width:220px; background:#f9f6f2; border:2px solid #bba; border-radius:10px; padding:10px; margin-bottom:12px;";
+            const langLabel = document.createElement("div");
+            langLabel.innerHTML = "<b>Languages</b>";
+            langLabel.style = "text-align:center; font-size:18px; margin-bottom:4px;";
+            langBox.appendChild(langLabel);
+
+            const langList = xmlDocGlobal?.querySelectorAll("character > languagelist > *");
+            if (langList && langList.length > 0) {
+                langList.forEach(langNode => {
+                    const nameNode = langNode.querySelector("name");
+                    if (!nameNode) return;
+                    const langDiv = document.createElement("div");
+                    langDiv.style = "margin-bottom:4px; display:flex; align-items:center;";
+                    const langInput = document.createElement("input");
+                    langInput.type = "text";
+                    langInput.value = (nameNode.textContent || "").trim();
+                    langInput.style = "width:100%; background:transparent; border:none; border-bottom:1px solid #ccc; font-size:15px; margin-bottom:2px;";
+                    langInput.oninput = () => { nameNode.textContent = langInput.value.trim(); };
+                    langDiv.appendChild(langInput);
+                    langBox.appendChild(langDiv);
+                });
+            } else {
+                langBox.appendChild(document.createTextNode("No languages found."));
+            }
+
+            // --- Notes ---
+            const notesNode = xmlDocGlobal?.querySelector("character > notes");
+            const notesBox = document.createElement("div");
+            notesBox.style = "flex-basis:100%; background:#f9f6f2; border:2px solid #bba; border-radius:10px; padding:10px; margin-bottom:12px;";
+            const notesLabel = document.createElement("div");
+            notesLabel.innerHTML = "<b>Notes</b>";
+            notesLabel.style = "text-align:center; font-size:18px; margin-bottom:4px;";
+            notesBox.appendChild(notesLabel);
+            const notesTA = document.createElement("textarea");
+            notesTA.style = "width:100%; min-height:120px; font-size:15px; background:transparent; border:none; resize:vertical; outline:none;";
+            notesTA.value = (notesNode?.textContent || "").trim();
+            notesTA.oninput = () => { if (notesNode) notesNode.textContent = notesTA.value; };
+            notesBox.appendChild(notesTA);
+
+            // Ensamblar
+            wrapper.appendChild(appearanceBox);
+            wrapper.appendChild(langBox);
+            wrapper.appendChild(notesBox);
+            container.appendChild(wrapper);
+
+            cambiarVisibilidad("vistaNotes");
+        }
+
+        /**
          * crearGrupoSuma(label, totalPath, componentes, dividirDesde)
          * - Crea un bloque que muestra:
          *   • Un título (<b>label</b>)
@@ -1127,7 +1210,6 @@
         }
 
         // Pestañas aún no implementadas (alerta placeholder)
-        function mostrarVistaNotes(btn) { alert("Notes no implementado."); }
         function mostrarVistaActions(btn) { alert("Actions no implementado."); }
     </script>
 </body>
