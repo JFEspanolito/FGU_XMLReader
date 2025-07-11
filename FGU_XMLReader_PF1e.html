@@ -48,6 +48,10 @@
 
     <!-- Zona de import/export de XML -->
     <div style="display: flex; justify-content: space-between; max-width: 600px; margin: 0 auto;">
+        <!-- Botón para nuevo archivo -->
+        <div>
+            <button onclick="nuevoPersonaje()">Nuevo Personaje</button>
+        </div>
         <!-- Botón para cargar archivo -->
         <div>
             <button onclick="document.getElementById('fileInput').click()">Importar XML</button>
@@ -111,6 +115,602 @@
                 }
             });
         });
+
+        // Función para crear plantilla vacía y cargarla
+        function nuevoPersonaje() {
+            if (confirm("¿Deseas cargar una plantilla vacía?")) {
+
+                // Plantilla XML básica para un personaje vacío (ajusta los campos que quieras)
+                const plantilla = `
+                <?xml version="1.0" encoding="utf-8"?><root version="4.7" dataversion="20241002" release="1.1|3.5E:17.1|CoreRPG:7">
+                    <character>
+                        <abilities>
+                            <charisma>
+                                <bonus type="number">0</bonus>
+                                <bonusmodifier type="number">0</bonusmodifier>
+                                <damage type="number">0</damage>
+                                <score type="number">10</score>
+                            </charisma>
+                            <constitution>
+                                <bonus type="number">0</bonus>
+                                <bonusmodifier type="number">0</bonusmodifier>
+                                <damage type="number">0</damage>
+                                <score type="number">10</score>
+                            </constitution>
+                            <dexterity>
+                                <bonus type="number">0</bonus>
+                                <bonusmodifier type="number">0</bonusmodifier>
+                                <damage type="number">0</damage>
+                                <score type="number">10</score>
+                            </dexterity>
+                            <intelligence>
+                                <bonus type="number">0</bonus>
+                                <bonusmodifier type="number">0</bonusmodifier>
+                                <damage type="number">0</damage>
+                                <score type="number">10</score>
+                            </intelligence>
+                            <strength>
+                                <bonus type="number">0</bonus>
+                                <bonusmodifier type="number">0</bonusmodifier>
+                                <damage type="number">0</damage>
+                                <score type="number">10</score>
+                            </strength>
+                            <wisdom>
+                                <bonus type="number">0</bonus>
+                                <bonusmodifier type="number">0</bonusmodifier>
+                                <damage type="number">0</damage>
+                                <score type="number">10</score>
+                            </wisdom>
+                        </abilities>
+                        <ac>
+                            <sources>
+                                <abilitymod type="number">0</abilitymod>
+                                <abilitymod2 type="number">0</abilitymod2>
+                                <armor type="number">0</armor>
+                                <cmdabilitymod type="number">0</cmdabilitymod>
+                                <cmdbasemod type="number">0</cmdbasemod>
+                                <cmdmisc type="number">0</cmdmisc>
+                                <deflection type="number">0</deflection>
+                                <dodge type="number">0</dodge>
+                                <ffmisc type="number">0</ffmisc>
+                                <misc type="number">0</misc>
+                                <naturalarmor type="number">0</naturalarmor>
+                                <shield type="number">0</shield>
+                                <size type="number">0</size>
+                                <temporary type="number">0</temporary>
+                                <touchmisc type="number">0</touchmisc>
+                            </sources>
+                            <totals>
+                                <cmd type="number">0</cmd>
+                                <flatfooted type="number">0</flatfooted>
+                                <general type="number">0</general>
+                                <touch type="number">0</touch>
+                            </totals>
+                        </ac>
+                        <age type="string"/>
+                        <alignment type="string"/>
+                        <appearance type="string">Empty</appearance>
+                        <attackbonus>
+                            <base type="number">0</base>
+                            <grapple>
+                                <abilitymod type="number">0</abilitymod>
+                                <misc type="number">0</misc>
+                                <size type="number">0</size>
+                                <temporary type="number">0</temporary>
+                                <total type="number">0</total>
+                            </grapple>
+                            <melee>
+                                <abilitymod type="number">0</abilitymod>
+                                <misc type="number">0</misc>
+                                <size type="number">0</size>
+                                <temporary type="number">0</temporary>
+                                <total type="number">0</total>
+                            </melee>
+                            <ranged>
+                                <abilitymod type="number">0</abilitymod>
+                                <misc type="number">0</misc>
+                                <size type="number">0</size>
+                                <temporary type="number">0</temporary>
+                                <total type="number">0</total>
+                            </ranged>
+                        </attackbonus>
+                        <classes>
+                            <id-00001>
+                                <favored type="number">0</favored>
+                                <level type="number"/>
+                                <shortcut type="windowreference">
+                                    <class/>
+                                    <recordname/>
+                                </shortcut>
+                                <skillranks type="number">0</skillranks>
+                                <skillranksused type="number">0</skillranksused>
+                            </id-00001>
+                        </classes>
+                        <coins>
+                            <id-00001>
+                                <amount type="number">1</amount>
+                                <name type="string">PP</name>
+                            </id-00001>
+                            <id-00002>
+                                <amount type="number">1</amount>
+                                <name type="string">GP</name>
+                            </id-00002>
+                            <id-00003>
+                                <amount type="number">1</amount>
+                                <name type="string">SP</name>
+                            </id-00003>
+                            <id-00004>
+                                <amount type="number">1</amount>
+                                <name type="string">CP</name>
+                            </id-00004>
+                        </coins>
+                        <defenses>
+                            <sr>
+                                <base type="number">0</base>
+                                <misc type="number">0</misc>
+                                <temporary type="number">0</temporary>
+                                <total type="number">0</total>
+                            </sr>
+                        </defenses>
+                        <deity type="string"/>
+                        <encumbrance>
+                            <armorcheckpenalty type="number">0</armorcheckpenalty>
+                            <armormaxstatbonus type="number">0</armormaxstatbonus>
+                            <armormaxstatbonusactive type="number">0</armormaxstatbonusactive>
+                            <heavyload type="number">100</heavyload>
+                            <liftoffground type="number">200</liftoffground>
+                            <liftoverhead type="number">100</liftoverhead>
+                            <lightload type="number">33</lightload>
+                            <load type="number">0</load>
+                            <mediumload type="number">66</mediumload>
+                            <pushordrag type="number">500</pushordrag>
+                            <spellfailure type="number">0</spellfailure>
+                        </encumbrance>
+                        <exp type="number">0</exp>
+                        <expneeded type="number">0</expneeded>
+                        <featlist>
+                            
+                        <feat><name/><benefit/><prerequisites/><special/><summary/></feat></featlist>
+                        <gender type="string"/>
+                        <height type="string"/>
+                        <hp>
+                            <nonlethal type="number">0</nonlethal>
+                            <temporary type="number">0</temporary>
+                            <total type="number">0</total>
+                            <wounds type="number">0</wounds>
+                        </hp>
+                        <initiative>
+                            <abilitymod type="number">0</abilitymod>
+                            <misc type="number">0</misc>
+                            <temporary type="number">0</temporary>
+                            <total type="number">0</total>
+                        </initiative>
+                        <inventorylist>
+                            <id-00001>
+                                <carried type="number">2</carried>
+                                <count type="number">1</count>
+                                <name type="string">Empty</name>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <weight type="number">0</weight>
+                            </id-00001>
+                        </inventorylist>
+                        <languagelist>
+                            <id-00001>
+                                <name type="string">Empty</name>
+                            </id-00001>
+                        </languagelist>
+                        <level type="number">0</level>
+                        <locked type="number">1</locked>
+                        <name type="string">Nuevo Personaje</name>
+                        <notes type="string">Empty</notes>
+                        <proficiencylist>
+                            
+                        <proficiency><name/><text/></proficiency></proficiencylist>
+                        <racelink type="windowreference">
+                            <class/>
+                            <recordname/>
+                        </racelink>
+                        <saves>
+                            <fortitude>
+                                <abilitymod type="number">0</abilitymod>
+                                <base type="number">0</base>
+                                <misc type="number">0</misc>
+                                <temporary type="number">0</temporary>
+                                <total type="number">0</total>
+                            </fortitude>
+                            <reflex>
+                                <abilitymod type="number">0</abilitymod>
+                                <base type="number">0</base>
+                                <misc type="number">0</misc>
+                                <temporary type="number">0</temporary>
+                                <total type="number">0</total>
+                            </reflex>
+                            <will>
+                                <abilitymod type="number">0</abilitymod>
+                                <base type="number">0</base>
+                                <misc type="number">0</misc>
+                                <temporary type="number">0</temporary>
+                                <total type="number">0</total>
+                            </will>
+                        </saves>
+                        <size type="string"/>
+                        <skilllist>
+                            <id-00001>
+                                <armorcheckmultiplier type="number">0</armorcheckmultiplier>
+                                <label type="string">Intimidate</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">charisma</statname>
+                                <total type="number">0</total>
+                            </id-00001>
+                            <id-00002>
+                                <armorcheckmultiplier type="number">1</armorcheckmultiplier>
+                                <label type="string">Climb</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">strength</statname>
+                                <total type="number">0</total>
+                            </id-00002>
+                            <id-00003>
+                                <armorcheckmultiplier type="number">1</armorcheckmultiplier>
+                                <label type="string">Escape Artist</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">dexterity</statname>
+                                <total type="number">0</total>
+                            </id-00003>
+                            <id-00004>
+                                <armorcheckmultiplier type="number">0</armorcheckmultiplier>
+                                <label type="string">Diplomacy</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">charisma</statname>
+                                <total type="number">0</total>
+                            </id-00004>
+                            <id-00005>
+                                <armorcheckmultiplier type="number">0</armorcheckmultiplier>
+                                <label type="string">Perception</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">wisdom</statname>
+                                <total type="number">0</total>
+                            </id-00005>
+                            <id-00006>
+                                <armorcheckmultiplier type="number">1</armorcheckmultiplier>
+                                <label type="string">Fly</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">dexterity</statname>
+                                <total type="number">0</total>
+                            </id-00006>
+                            <id-00007>
+                                <armorcheckmultiplier type="number">1</armorcheckmultiplier>
+                                <label type="string">Disable Device</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">0</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">dexterity</statname>
+                                <total type="number">0</total>
+                            </id-00007>
+                            <id-00008>
+                                <armorcheckmultiplier type="number">1</armorcheckmultiplier>
+                                <label type="string">Acrobatics</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">dexterity</statname>
+                                <total type="number">0</total>
+                            </id-00008>
+                            <id-00009>
+                                <armorcheckmultiplier type="number">0</armorcheckmultiplier>
+                                <label type="string">Use Magic Device</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">0</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">charisma</statname>
+                                <total type="number">0</total>
+                            </id-00009>
+                            <id-00010>
+                                <armorcheckmultiplier type="number">0</armorcheckmultiplier>
+                                <label type="string">Handle Animal</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">0</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">charisma</statname>
+                                <total type="number">0</total>
+                            </id-00010>
+                            <id-00011>
+                                <armorcheckmultiplier type="number">1</armorcheckmultiplier>
+                                <label type="string">Swim</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">strength</statname>
+                                <total type="number">0</total>
+                            </id-00011>
+                            <id-00012>
+                                <armorcheckmultiplier type="number">1</armorcheckmultiplier>
+                                <label type="string">Sleight of Hand</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">dexterity</statname>
+                                <total type="number">0</total>
+                            </id-00012>
+                            <id-00013>
+                                <armorcheckmultiplier type="number">0</armorcheckmultiplier>
+                                <label type="string">Survival</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">wisdom</statname>
+                                <total type="number">0</total>
+                            </id-00013>
+                            <id-00014>
+                                <armorcheckmultiplier type="number">0</armorcheckmultiplier>
+                                <label type="string">Appraise</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">intelligence</statname>
+                                <total type="number">0</total>
+                            </id-00014>
+                            <id-00015>
+                                <armorcheckmultiplier type="number">0</armorcheckmultiplier>
+                                <label type="string">Linguistics</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">0</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">intelligence</statname>
+                                <total type="number">0</total>
+                            </id-00015>
+                            <id-00016>
+                                <armorcheckmultiplier type="number">0</armorcheckmultiplier>
+                                <label type="string">Bluff</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">charisma</statname>
+                                <total type="number">0</total>
+                            </id-00016>
+                            <id-00017>
+                                <armorcheckmultiplier type="number">0</armorcheckmultiplier>
+                                <label type="string">Disguise</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">charisma</statname>
+                                <total type="number">0</total>
+                            </id-00017>
+                            <id-00018>
+                                <armorcheckmultiplier type="number">0</armorcheckmultiplier>
+                                <label type="string">Sense Motive</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">wisdom</statname>
+                                <total type="number">0</total>
+                            </id-00018>
+                            <id-00019>
+                                <armorcheckmultiplier type="number">1</armorcheckmultiplier>
+                                <label type="string">Ride</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">dexterity</statname>
+                                <total type="number">0</total>
+                            </id-00019>
+                            <id-00020>
+                                <armorcheckmultiplier type="number">1</armorcheckmultiplier>
+                                <label type="string">Stealth</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">dexterity</statname>
+                                <total type="number">0</total>
+                            </id-00020>
+                            <id-00021>
+                                <armorcheckmultiplier type="number">0</armorcheckmultiplier>
+                                <label type="string">Heal</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">1</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">wisdom</statname>
+                                <total type="number">0</total>
+                            </id-00021>
+                            <id-00022>
+                                <armorcheckmultiplier type="number">0</armorcheckmultiplier>
+                                <label type="string">Spellcraft</label>
+                                <misc type="number">0</misc>
+                                <ranks type="number">0</ranks>
+                                <showonminisheet type="number">0</showonminisheet>
+                                <stat type="number">0</stat>
+                                <state type="number">0</state>
+                                <statname type="string">intelligence</statname>
+                                <total type="number">0</total>
+                            </id-00022>
+                        </skilllist>
+                        <skillpoints>
+                            <spent type="number">22</spent>
+                        </skillpoints>
+                        <specialabilitylist>
+                            
+                        <specialability><name/><text/><type/></specialability></specialabilitylist>
+                        <speed>
+                            <armor type="number">0</armor>
+                            <base type="number">0</base>
+                            <final type="number">0</final>
+                            <misc type="number">0</misc>
+                            <temporary type="number">0</temporary>
+                            <total type="number">0</total>
+                        </speed>
+                        <spellset>
+                            <id-00001>
+                                <availablelevel0 type="number">1</availablelevel0>
+                                <availablelevel1 type="number">0</availablelevel1>
+                                <availablelevel2 type="number">0</availablelevel2>
+                                <availablelevel3 type="number">0</availablelevel3>
+                                <availablelevel4 type="number">0</availablelevel4>
+                                <availablelevel5 type="number">0</availablelevel5>
+                                <availablelevel6 type="number">0</availablelevel6>
+                                <availablelevel7 type="number">0</availablelevel7>
+                                <availablelevel8 type="number">0</availablelevel8>
+                                <availablelevel9 type="number">0</availablelevel9>
+                                <cc>
+                                    <misc type="number">0</misc>
+                                </cc>
+                                <cl type="number">1</cl>
+                                <dc>
+                                    <abilitymod type="number">0</abilitymod>
+                                    <misc type="number">0</misc>
+                                    <total type="number">10</total>
+                                </dc>
+                                <label type="string">Spells</label>
+                                <levels>
+                                    <level0>
+                                        <level type="number">0</level>
+                                        <maxprepared type="number">0</maxprepared>
+                                        <spells>
+                                            
+                                        <spell><name/><school/><description/></spell></spells>
+                                        <totalcast type="number">0</totalcast>
+                                        <totalprepared type="number">0</totalprepared>
+                                    </level0>
+                                    <level1>
+                                        <level type="number">1</level>
+                                        <maxprepared type="number">0</maxprepared>
+                                        <spells/>
+                                        <totalcast type="number">0</totalcast>
+                                        <totalprepared type="number">0</totalprepared>
+                                    </level1>
+                                    <level2>
+                                        <level type="number">2</level>
+                                        <maxprepared type="number">0</maxprepared>
+                                        <spells/>
+                                        <totalcast type="number">0</totalcast>
+                                        <totalprepared type="number">0</totalprepared>
+                                    </level2>
+                                    <level3>
+                                        <level type="number">3</level>
+                                        <maxprepared type="number">0</maxprepared>
+                                        <spells/>
+                                        <totalcast type="number">0</totalcast>
+                                        <totalprepared type="number">0</totalprepared>
+                                    </level3>
+                                    <level4>
+                                        <level type="number">4</level>
+                                        <maxprepared type="number">0</maxprepared>
+                                        <spells/>
+                                        <totalcast type="number">0</totalcast>
+                                        <totalprepared type="number">0</totalprepared>
+                                    </level4>
+                                    <level5>
+                                        <level type="number">5</level>
+                                        <maxprepared type="number">0</maxprepared>
+                                        <spells/>
+                                        <totalcast type="number">0</totalcast>
+                                        <totalprepared type="number">0</totalprepared>
+                                    </level5>
+                                    <level6>
+                                        <level type="number">6</level>
+                                        <maxprepared type="number">0</maxprepared>
+                                        <spells/>
+                                        <totalcast type="number">0</totalcast>
+                                        <totalprepared type="number">0</totalprepared>
+                                    </level6>
+                                    <level7>
+                                        <level type="number">7</level>
+                                        <maxprepared type="number">0</maxprepared>
+                                        <spells/>
+                                        <totalcast type="number">0</totalcast>
+                                        <totalprepared type="number">0</totalprepared>
+                                    </level7>
+                                    <level8>
+                                        <level type="number">8</level>
+                                        <maxprepared type="number">0</maxprepared>
+                                        <spells/>
+                                        <totalcast type="number">0</totalcast>
+                                        <totalprepared type="number">0</totalprepared>
+                                    </level8>
+                                    <level9>
+                                        <level type="number">9</level>
+                                        <maxprepared type="number">0</maxprepared>
+                                        <spells/>
+                                        <totalcast type="number">0</totalcast>
+                                        <totalprepared type="number">0</totalprepared>
+                                    </level9>
+                                </levels>
+                                <points type="number">0</points>
+                                <pointsused type="number">0</pointsused>
+                                <sp type="number">0</sp>
+                            </id-00001>
+                        </spellset>
+                        <traitlist>
+                            
+                        <trait><name/><text/><type/></trait></traitlist>
+                        <weaponlist/>
+                        <weight type="string"/>
+                    </character>
+                </root>
+            `.trim();
+
+                // Cargar la plantilla como si fuera un archivo
+                xmlDocGlobal = new DOMParser().parseFromString(plantilla, "application/xml");
+                limpiarEspaciosXML();
+                document.getElementById("nombreArchivoXML").textContent = "nuevo_personaje.xml";
+                document.getElementById("tabPanel").style.display = "block";
+                mostrarVistaMain(document.querySelector(".tab-button"));
+
+            }
+        }
 
         /**
          * importarXML()
@@ -766,6 +1366,48 @@
                 titulo.textContent = grupo.titulo;
                 wrapper.appendChild(titulo);
 
+                // --- Botón para añadir nueva entrada ---
+                const btnAdd = document.createElement("button");
+                btnAdd.textContent = "+ Añadir " + grupo.titulo.slice(0, -1);
+                btnAdd.style = "margin-bottom:12px;";
+                btnAdd.onclick = () => {
+                    const base = xmlDocGlobal.querySelector(grupo.path);
+                    if (!base) return;
+                    let nuevo;
+                    if (grupo.titulo === "Feats") {
+                        nuevo = xmlDocGlobal.createElement("feat");
+                        ["name", "benefit", "prerequisites", "special", "summary"].forEach(tag => {
+                            const n = xmlDocGlobal.createElement(tag);
+                            n.textContent = "";
+                            nuevo.appendChild(n);
+                        });
+                    } else if (grupo.titulo === "Class Abilities") {
+                        nuevo = xmlDocGlobal.createElement("specialability");
+                        ["name", "text", "type"].forEach(tag => {
+                            const n = xmlDocGlobal.createElement(tag);
+                            n.textContent = "";
+                            nuevo.appendChild(n);
+                        });
+                    } else if (grupo.titulo === "Racial Traits") {
+                        nuevo = xmlDocGlobal.createElement("trait");
+                        ["name", "text", "type"].forEach(tag => {
+                            const n = xmlDocGlobal.createElement(tag);
+                            n.textContent = "";
+                            nuevo.appendChild(n);
+                        });
+                    } else if (grupo.titulo === "Proficiencies") {
+                        nuevo = xmlDocGlobal.createElement("proficiency");
+                        ["name", "text"].forEach(tag => {
+                            const n = xmlDocGlobal.createElement(tag);
+                            n.textContent = "";
+                            nuevo.appendChild(n);
+                        });
+                    }
+                    base.appendChild(nuevo);
+                    mostrarVistaAbilities(btn);
+                };
+                wrapper.appendChild(btnAdd);
+
                 // Lista de nodos hijos
                 const base = xmlDocGlobal.querySelector(grupo.path);
                 if (!base) {
@@ -790,7 +1432,6 @@
                     };
                     card.appendChild(btnDel);
 
-                    // --- ESTE BLOQUE DEBE IR AQUÍ ---
                     grupo.campos.forEach(campo => {
                         const n = nodo.querySelector(campo);
                         if (!n) return;
@@ -833,7 +1474,6 @@
                             card.appendChild(val);
                         }
                     });
-                    // --- FIN DEL BLOQUE ---
 
                     wrapper.appendChild(card);
                 });
@@ -881,6 +1521,28 @@
             invTitle.textContent = "Items del Inventario";
             invWrapper.appendChild(invTitle);
 
+            // --- Botón Añadir Objeto ---
+            const btnAddObj = document.createElement("button");
+            btnAddObj.textContent = "+ Añadir Objeto";
+            btnAddObj.style = "margin-bottom:12px;";
+            btnAddObj.onclick = () => {
+                const invList = xmlDocGlobal?.querySelector("character > inventorylist");
+                if (!invList) return;
+                // Genera un id único
+                let idx = 1;
+                while (invList.querySelector(`id-${String(idx).padStart(5, "0")}`)) idx++;
+                const newItem = xmlDocGlobal.createElement(`id-${String(idx).padStart(5, "0")}`);
+                // Campos básicos
+                ["count", "name", "location", "carried", "weight"].forEach(tag => {
+                    const n = xmlDocGlobal.createElement(tag);
+                    n.textContent = (tag === "count" || tag === "weight") ? "1" : "";
+                    newItem.appendChild(n);
+                });
+                invList.appendChild(newItem);
+                mostrarVistaInventory(btn);
+            };
+            invWrapper.appendChild(btnAddObj);
+
             const invList = xmlDocGlobal?.querySelector("character > inventorylist");
             if (!invList || invList.children.length === 0) {
                 invWrapper.appendChild(document.createTextNode("No hay items en el inventario."));
@@ -900,7 +1562,6 @@
                     };
                     card.appendChild(btnDel);
 
-                    // Campos editables
                     [
                         ["Cantidad", "count"],
                         ["Nombre", "name"],
@@ -935,6 +1596,26 @@
             const goldTitle = document.createElement("h3");
             goldTitle.textContent = "Tesoro (Gold)";
             goldWrapper.appendChild(goldTitle);
+
+            // --- Botón Añadir Tesoro ---
+            const btnAddGold = document.createElement("button");
+            btnAddGold.textContent = "+ Añadir Tesoro";
+            btnAddGold.style = "margin-bottom:12px;";
+            btnAddGold.onclick = () => {
+                let coin = xmlDocGlobal?.querySelector("character > coin");
+                if (!coin) {
+                    coin = xmlDocGlobal.createElement("coin");
+                    ["total", "spent", "carried"].forEach(tag => {
+                        const n = xmlDocGlobal.createElement(tag);
+                        n.textContent = "0";
+                        coin.appendChild(n);
+                    });
+                    const char = xmlDocGlobal.querySelector("character");
+                    char.appendChild(coin);
+                }
+                mostrarVistaInventory(btn);
+            };
+            goldWrapper.appendChild(btnAddGold);
 
             const coin = xmlDocGlobal?.querySelector("character > coin");
             [
@@ -993,6 +1674,562 @@
             container.appendChild(cargaWrapper);
 
             cambiarVisibilidad("vistaInventory");
+        }
+
+        /**
+         * mostrarVistaNotes(btn)
+         * - Activa la pestaña activa según el botón pulsado.
+         * - Limpia el contenedor datosNotes.
+         * - Crea un wrapper con estilo y añade campos para Appearance, Languages y Notes.
+         * - Appearance: textarea editable que actualiza el nodo XML.
+         * - Languages: lista de inputs editables para cada lenguaje encontrado en el XML.
+         * - Notes: textarea editable que actualiza el nodo XML.
+         * - Añade todo al contenedor y llama a cambiarVisibilidad("vistaNotes") para mostrar esta vista.
+         */
+        function mostrarVistaNotes(btn) {
+            activarPestanaActiva(btn);
+            const container = document.getElementById("datosNotes");
+            container.innerHTML = "";
+
+            // Wrapper general
+            const wrapper = document.createElement("div");
+            wrapper.style = "display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; align-items: flex-start; max-width:900px; margin:0 auto;";
+
+            // --- Appearance ---
+            const appearanceNode = xmlDocGlobal?.querySelector("character > appearance");
+            const appearanceBox = document.createElement("div");
+            appearanceBox.style = "flex:2; min-width:320px; max-width:480px; background:#f9f6f2; border:2px solid #bba; border-radius:10px; padding:10px; margin-bottom:12px;";
+            const appearanceLabel = document.createElement("div");
+            appearanceLabel.innerHTML = "<b>Appearance</b>";
+            appearanceLabel.style = "text-align:center; font-size:18px; margin-bottom:4px;";
+            appearanceBox.appendChild(appearanceLabel);
+            const appearanceTA = document.createElement("textarea");
+            appearanceTA.style = "width:100%; min-height:90px; font-size:15px; background:transparent; border:none; resize:vertical; outline:none;";
+            appearanceTA.value = (appearanceNode?.textContent || "").trim();
+            appearanceTA.oninput = () => { if (appearanceNode) appearanceNode.textContent = appearanceTA.value; };
+            appearanceBox.appendChild(appearanceTA);
+
+            // --- Languages ---
+            const langBox = document.createElement("div");
+            langBox.style = "flex:1; min-width:180px; max-width:220px; background:#f9f6f2; border:2px solid #bba; border-radius:10px; padding:10px; margin-bottom:12px;";
+            const langLabel = document.createElement("div");
+            langLabel.innerHTML = "<b>Languages</b>";
+            langLabel.style = "text-align:center; font-size:18px; margin-bottom:4px;";
+            langBox.appendChild(langLabel);
+
+            const langList = xmlDocGlobal?.querySelectorAll("character > languagelist > *");
+            if (langList && langList.length > 0) {
+                langList.forEach(langNode => {
+                    const nameNode = langNode.querySelector("name");
+                    if (!nameNode) return;
+                    const langDiv = document.createElement("div");
+                    langDiv.style = "margin-bottom:4px; display:flex; align-items:center;";
+                    const langInput = document.createElement("input");
+                    langInput.type = "text";
+                    langInput.value = (nameNode.textContent || "").trim();
+                    langInput.style = "width:100%; background:transparent; border:none; border-bottom:1px solid #ccc; font-size:15px; margin-bottom:2px;";
+                    langInput.oninput = () => { nameNode.textContent = langInput.value.trim(); };
+                    langDiv.appendChild(langInput);
+                    langBox.appendChild(langDiv);
+                });
+            } else {
+                langBox.appendChild(document.createTextNode("No languages found."));
+            }
+
+            // --- Notes ---
+            const notesNode = xmlDocGlobal?.querySelector("character > notes");
+            const notesBox = document.createElement("div");
+            notesBox.style = "flex-basis:100%; background:#f9f6f2; border:2px solid #bba; border-radius:10px; padding:10px; margin-bottom:12px;";
+            const notesLabel = document.createElement("div");
+            notesLabel.innerHTML = "<b>Notes</b>";
+            notesLabel.style = "text-align:center; font-size:18px; margin-bottom:4px;";
+            notesBox.appendChild(notesLabel);
+            const notesTA = document.createElement("textarea");
+            notesTA.style = "width:100%; min-height:120px; font-size:15px; background:transparent; border:none; resize:vertical; outline:none;";
+            notesTA.value = (notesNode?.textContent || "").trim();
+            notesTA.oninput = () => { if (notesNode) notesNode.textContent = notesTA.value; };
+            notesBox.appendChild(notesTA);
+
+            // Ensamblar
+            wrapper.appendChild(appearanceBox);
+            wrapper.appendChild(langBox);
+            wrapper.appendChild(notesBox);
+            container.appendChild(wrapper);
+
+            cambiarVisibilidad("vistaNotes");
+        }
+
+        /**
+         * mostrarVistaActions(btn)
+         * - Activa la pestaña activa según el botón pulsado.
+         * - Limpia el contenedor datosActions.
+         * - Crea tabs internas: Spells, Weapons, Items, Others.
+         * - Dependiendo de la pestaña activa:
+         *     • Spells: Agrupa por source y group, muestra hechizos con nivel, nombre y tipo.
+         *     • Weapons: Muestra poderes de tipo weapon con nombre, grupo y acciones (atkmod, damage).
+         *     • Items: Muestra poderes de tipo item (scrolls, potions) con nombre, nivel, usos y preparación.
+         *     • Others: Agrupa poderes por group y muestra CL y CC.
+         * - Llama a cambiarVisibilidad("vistaActions") para mostrar esta vista.
+         */
+        function mostrarVistaActions(btn) {
+            activarPestanaActiva(btn);
+            const container = document.getElementById("datosActions");
+            container.innerHTML = "";
+
+            // Tabs internas
+            const tabNames = ["Spells", "Weapons", "Items", "Others"];
+            let activeTab = "Spells";
+            const tabBar = document.createElement("div");
+            tabBar.style = "display:flex; gap:8px; justify-content:center; margin-bottom:12px;";
+            tabNames.forEach(tab => {
+                const b = document.createElement("button");
+                b.textContent = tab;
+                b.className = "tab-button" + (tab === activeTab ? " active" : "");
+                b.onclick = () => {
+                    activeTab = tab;
+                    renderTab();
+                    tabBar.querySelectorAll("button").forEach(btn => btn.classList.remove("active"));
+                    b.classList.add("active");
+                };
+                tabBar.appendChild(b);
+            });
+            container.appendChild(tabBar);
+
+            function renderEditableSimpleSpells(set, groupDiv, xmlDocGlobal, renderTab) {
+                set.querySelectorAll("spells > *").forEach(spell => {
+                    const card = document.createElement("div");
+                    card.style = "border:1px solid #bbb; border-radius:6px; margin:8px 0; padding:8px; background:#f8f8f8; position:relative; max-width:500px; margin-left:auto; margin-right:auto;";
+
+                    // Botón eliminar
+                    const btnDel = document.createElement("button");
+                    btnDel.textContent = "✖";
+                    btnDel.title = "Eliminar";
+                    btnDel.style = "position:absolute; right:8px; top:8px; background:#f44; color:#fff; border:none; border-radius:50%; width:22px; height:22px; cursor:pointer;";
+                    btnDel.onclick = () => {
+                        spell.parentNode.removeChild(spell);
+                        renderTab();
+                    };
+                    card.appendChild(btnDel);
+
+                    // Campos editables: Nombre, Escuela, Descripción
+                    [
+                        ["Nombre", "name"],
+                        ["Escuela", "school"],
+                        ["Descripción", "description"]
+                    ].forEach(([label, tag]) => {
+                        let n = spell.querySelector(tag);
+                        if (!n) {
+                            n = xmlDocGlobal.createElement(tag);
+                            spell.appendChild(n);
+                        }
+                        const lbl = document.createElement("div");
+                        lbl.style = "font-weight:bold; margin-top:4px;";
+                        lbl.textContent = label + ":";
+                        card.appendChild(lbl);
+
+                        if (tag === "description") {
+                            const textarea = document.createElement("textarea");
+                            textarea.value = (n.textContent || "").trim();
+                            textarea.style = "width:95%; min-height:60px; margin-bottom:4px;";
+                            textarea.oninput = () => { n.textContent = textarea.value.trim(); };
+                            card.appendChild(textarea);
+                        } else {
+                            const inp = document.createElement("input");
+                            inp.type = "text";
+                            inp.value = (n.textContent || "").trim();
+                            inp.style = "width:95%; margin-bottom:4px;";
+                            inp.oninput = () => { n.textContent = inp.value.trim(); };
+                            card.appendChild(inp);
+                        }
+                    });
+
+                    groupDiv.appendChild(card);
+                });
+            }
+
+            function renderTab() {
+                while (container.children.length > 1) container.removeChild(container.lastChild);
+
+                // --- SPELLS ---
+                if (activeTab === "Spells") {
+                    const spellsets = xmlDocGlobal.querySelectorAll("character > spellset > *");
+                    if (spellsets.length === 0) {
+                        container.appendChild(document.createTextNode("No spells found."));
+                        return;
+                    }
+                    spellsets.forEach(set => {
+                        const label = set.querySelector("label")?.textContent || "Spells";
+                        const cl = set.querySelector("cl")?.textContent || "";
+                        const cc = set.querySelector("cc > misc")?.textContent || "";
+                        const title = document.createElement("div");
+                        title.innerHTML = `<b>${label}</b> <span style="color:#888;">CL ${cl} CC ${cc}</span>`;
+                        title.style = "margin:16px 0 4px 0; font-size:17px; text-align:left;";
+                        container.appendChild(title);
+
+                        set.querySelectorAll("levels > *").forEach(levelNode => {
+                            const lvl = levelNode.querySelector("level")?.textContent || levelNode.nodeName.replace("level", "");
+                            const spells = levelNode.querySelectorAll("spells > *");
+                            if (spells.length === 0) return;
+                            const groupDiv = document.createElement("div");
+                            groupDiv.innerHTML = `<b>Level ${lvl}</b>`;
+                            groupDiv.style = "margin:8px 0 4px 0; font-size:15px; text-align:left;";
+                            container.appendChild(groupDiv);
+
+                            // Tarjetas editables simplificadas
+                            renderEditableSimpleSpells(levelNode, groupDiv, xmlDocGlobal, renderTab);
+
+                            // Botón para añadir nuevo spell
+                            const btnAdd = document.createElement("button");
+                            btnAdd.textContent = "+ Añadir hechizo";
+                            btnAdd.style = "margin:8px 0 8px 16px;";
+                            btnAdd.onclick = () => {
+                                const spellsNode = levelNode.querySelector("spells");
+                                if (!spellsNode) return;
+                                const newSpell = xmlDocGlobal.createElement("spell");
+                                ["name", "school", "description"].forEach(tag => {
+                                    const n = xmlDocGlobal.createElement(tag);
+                                    n.textContent = "";
+                                    newSpell.appendChild(n);
+                                });
+                                spellsNode.appendChild(newSpell);
+                                renderTab();
+                            };
+                            groupDiv.appendChild(btnAdd);
+                        });
+                    });
+                }
+
+                // --- WEAPONS ---
+                else if (activeTab === "Weapons") {
+                    const weapons = xmlDocGlobal.querySelectorAll("character > weaponlist > *");
+                    if (weapons.length === 0) {
+                        container.appendChild(document.createTextNode("No weapons found."));
+                        // Botón para añadir nueva arma aunque no haya ninguna
+                        const btnAdd = document.createElement("button");
+                        btnAdd.textContent = "+ Añadir arma";
+                        btnAdd.style = "margin:8px 0 8px 16px;";
+                        btnAdd.onclick = () => {
+                            const weaponList = xmlDocGlobal.querySelector("character > weaponlist");
+                            if (!weaponList) return;
+                            const newWeapon = xmlDocGlobal.createElement("weapon");
+                            ["name", "attackview1", "attackview2", "attackview3", "attackview4"].forEach(tag => {
+                                const n = xmlDocGlobal.createElement(tag);
+                                n.textContent = "";
+                                newWeapon.appendChild(n);
+                            });
+                            // Daño
+                            const dmgList = xmlDocGlobal.createElement("damagelist");
+                            const dmgEntry = xmlDocGlobal.createElement("damage");
+                            ["dice", "type", "bonus"].forEach(tag => {
+                                const n = xmlDocGlobal.createElement(tag);
+                                n.textContent = "";
+                                dmgEntry.appendChild(n);
+                            });
+                            dmgList.appendChild(dmgEntry);
+                            newWeapon.appendChild(dmgList);
+
+                            weaponList.appendChild(newWeapon);
+                            renderTab();
+                        };
+                        container.appendChild(btnAdd);
+                        return;
+                    }
+                    weapons.forEach(weapon => {
+                        const card = document.createElement("div");
+                        card.style = "border:1px solid #bbb; border-radius:6px; margin:8px 0; padding:8px; background:#f8f8f8; position:relative; max-width:500px; margin-left:auto; margin-right:auto;";
+
+                        // Botón eliminar
+                        const btnDel = document.createElement("button");
+                        btnDel.textContent = "✖";
+                        btnDel.title = "Eliminar";
+                        btnDel.style = "position:absolute; right:8px; top:8px; background:#f44; color:#fff; border:none; border-radius:50%; width:22px; height:22px; cursor:pointer;";
+                        btnDel.onclick = () => {
+                            weapon.parentNode.removeChild(weapon);
+                            renderTab();
+                        };
+                        card.appendChild(btnDel);
+
+                        // Nombre
+                        let n = weapon.querySelector("name");
+                        if (!n) {
+                            n = xmlDocGlobal.createElement("name");
+                            weapon.appendChild(n);
+                        }
+                        const lblName = document.createElement("div");
+                        lblName.style = "font-weight:bold; margin-top:4px;";
+                        lblName.textContent = "Nombre:";
+                        card.appendChild(lblName);
+
+                        const inpName = document.createElement("input");
+                        inpName.type = "text";
+                        inpName.value = (n.textContent || "").trim();
+                        inpName.style = "width:95%; margin-bottom:4px;";
+                        inpName.oninput = () => { n.textContent = inpName.value.trim(); };
+                        card.appendChild(inpName);
+
+                        // Ataques
+                        for (let i = 1; i <= 4; i++) {
+                            let atk = weapon.querySelector(`attackview${i}`);
+                            if (!atk) {
+                                atk = xmlDocGlobal.createElement(`attackview${i}`);
+                                weapon.appendChild(atk);
+                            }
+                            const lblAtk = document.createElement("div");
+                            lblAtk.style = "font-weight:bold; margin-top:4px;";
+                            lblAtk.textContent = `Ataque ${i}:`;
+                            card.appendChild(lblAtk);
+
+                            const inpAtk = document.createElement("input");
+                            inpAtk.type = "text";
+                            inpAtk.value = (atk.textContent || "").trim();
+                            inpAtk.style = "width:95%; margin-bottom:4px;";
+                            inpAtk.oninput = () => { atk.textContent = inpAtk.value.trim(); };
+                            card.appendChild(inpAtk);
+                        }
+
+                        // Daño
+                        let dmgEntry = weapon.querySelector("damagelist > damage");
+                        if (!dmgEntry) {
+                            let dmgList = weapon.querySelector("damagelist");
+                            if (!dmgList) {
+                                dmgList = xmlDocGlobal.createElement("damagelist");
+                                weapon.appendChild(dmgList);
+                            }
+                            dmgEntry = xmlDocGlobal.createElement("damage");
+                            ["dice", "type", "bonus"].forEach(tag => {
+                                const n = xmlDocGlobal.createElement(tag);
+                                n.textContent = "";
+                                dmgEntry.appendChild(n);
+                            });
+                            dmgList.appendChild(dmgEntry);
+                        }
+
+                        // Daño: dados
+                        let dice = dmgEntry.querySelector("dice");
+                        const lblDice = document.createElement("div");
+                        lblDice.style = "font-weight:bold; margin-top:4px;";
+                        lblDice.textContent = "Daño (dados):";
+                        card.appendChild(lblDice);
+
+                        const inpDice = document.createElement("input");
+                        inpDice.type = "text";
+                        inpDice.value = (dice?.textContent || "").trim();
+                        inpDice.style = "width:95%; margin-bottom:4px;";
+                        inpDice.oninput = () => { if (dice) dice.textContent = inpDice.value.trim(); };
+                        card.appendChild(inpDice);
+
+                        // Daño: tipo
+                        let dtype = dmgEntry.querySelector("type");
+                        const lblType = document.createElement("div");
+                        lblType.style = "font-weight:bold; margin-top:4px;";
+                        lblType.textContent = "Tipo de daño:";
+                        card.appendChild(lblType);
+
+                        const inpType = document.createElement("input");
+                        inpType.type = "text";
+                        inpType.value = (dtype?.textContent || "").trim();
+                        inpType.style = "width:95%; margin-bottom:4px;";
+                        inpType.oninput = () => { if (dtype) dtype.textContent = inpType.value.trim(); };
+                        card.appendChild(inpType);
+
+                        // Daño: bonus
+                        let bonus = dmgEntry.querySelector("bonus");
+                        const lblBonus = document.createElement("div");
+                        lblBonus.style = "font-weight:bold; margin-top:4px;";
+                        lblBonus.textContent = "Bonus:";
+                        card.appendChild(lblBonus);
+
+                        const inpBonus = document.createElement("input");
+                        inpBonus.type = "text";
+                        inpBonus.value = (bonus?.textContent || "").trim();
+                        inpBonus.style = "width:95%; margin-bottom:4px;";
+                        inpBonus.oninput = () => { if (bonus) bonus.textContent = inpBonus.value.trim(); };
+                        card.appendChild(inpBonus);
+
+                        container.appendChild(card);
+                    });
+
+                    // Botón para añadir nueva arma
+                    const btnAdd = document.createElement("button");
+                    btnAdd.textContent = "+ Añadir arma";
+                    btnAdd.style = "margin:8px 0 8px 16px;";
+                    btnAdd.onclick = () => {
+                        const weaponList = xmlDocGlobal.querySelector("character > weaponlist");
+                        if (!weaponList) return;
+                        const newWeapon = xmlDocGlobal.createElement("weapon");
+                        ["name", "attackview1", "attackview2", "attackview3", "attackview4"].forEach(tag => {
+                            const n = xmlDocGlobal.createElement(tag);
+                            n.textContent = "";
+                            newWeapon.appendChild(n);
+                        });
+                        // Daño
+                        const dmgList = xmlDocGlobal.createElement("damagelist");
+                        const dmgEntry = xmlDocGlobal.createElement("damage");
+                        ["dice", "type", "bonus"].forEach(tag => {
+                            const n = xmlDocGlobal.createElement(tag);
+                            n.textContent = "";
+                            dmgEntry.appendChild(n);
+                        });
+                        dmgList.appendChild(dmgEntry);
+                        newWeapon.appendChild(dmgList);
+
+                        weaponList.appendChild(newWeapon);
+                        renderTab();
+                    };
+                    container.appendChild(btnAdd);
+                }
+
+                // --- ITEMS ---
+                else if (activeTab === "Items") {
+                    const itemsets = xmlDocGlobal.querySelectorAll("character > itemspellset > *");
+                    if (itemsets.length === 0) {
+                        container.appendChild(document.createTextNode("No items found."));
+                        return;
+                    }
+                    itemsets.forEach(set => {
+                        const label = set.querySelector("label")?.textContent || "Items";
+                        const cl = set.querySelector("cl")?.textContent || "";
+                        const cc = set.querySelector("cc > misc")?.textContent || "";
+                        const title = document.createElement("div");
+                        title.innerHTML = `<b>${label}</b> <span style="color:#888;">CL ${cl} CC ${cc}</span>`;
+                        title.style = "margin:16px 0 4px 0; font-size:17px; text-align:left;";
+                        container.appendChild(title);
+
+                        set.querySelectorAll("levels > *").forEach(levelNode => {
+                            const lvl = levelNode.querySelector("level")?.textContent || levelNode.nodeName.replace("level", "");
+                            const spells = levelNode.querySelectorAll("spells > *");
+                            if (spells.length === 0) return;
+                            const groupDiv = document.createElement("div");
+                            groupDiv.innerHTML = `<b>Level ${lvl}</b>`;
+                            groupDiv.style = "margin:8px 0 4px 0; font-size:15px; text-align:left;";
+                            container.appendChild(groupDiv);
+
+                            spells.forEach(spell => {
+                                const card = document.createElement("div");
+                                card.style = "border:1px solid #bbb; border-radius:6px; margin:8px 0; padding:8px; background:#f8f8f8; position:relative; max-width:500px; margin-left:auto; margin-right:auto;";
+
+                                // Botón eliminar
+                                const btnDel = document.createElement("button");
+                                btnDel.textContent = "✖";
+                                btnDel.title = "Eliminar";
+                                btnDel.style = "position:absolute; right:8px; top:8px; background:#f44; color:#fff; border:none; border-radius:50%; width:22px; height:22px; cursor:pointer;";
+                                btnDel.onclick = () => {
+                                    spell.parentNode.removeChild(spell);
+                                    renderTab();
+                                };
+                                card.appendChild(btnDel);
+
+                                // Nombre
+                                let n = spell.querySelector("name");
+                                if (!n) {
+                                    n = xmlDocGlobal.createElement("name");
+                                    spell.appendChild(n);
+                                }
+                                const lblName = document.createElement("div");
+                                lblName.style = "font-weight:bold; margin-top:4px;";
+                                lblName.textContent = "Nombre:";
+                                card.appendChild(lblName);
+
+                                const inpName = document.createElement("input");
+                                inpName.type = "text";
+                                inpName.value = (n.textContent || "").trim();
+                                inpName.style = "width:95%; margin-bottom:4px;";
+                                inpName.oninput = () => { n.textContent = inpName.value.trim(); };
+                                card.appendChild(inpName);
+
+                                // Descripción
+                                let d = spell.querySelector("description");
+                                if (!d) {
+                                    d = xmlDocGlobal.createElement("description");
+                                    spell.appendChild(d);
+                                }
+                                const lblDesc = document.createElement("div");
+                                lblDesc.style = "font-weight:bold; margin-top:4px;";
+                                lblDesc.textContent = "Descripción:";
+                                card.appendChild(lblDesc);
+
+                                const textarea = document.createElement("textarea");
+                                textarea.value = (d.textContent || "").trim();
+                                textarea.style = "width:95%; min-height:60px; margin-bottom:4px;";
+                                textarea.oninput = () => { d.textContent = textarea.value.trim(); };
+                                card.appendChild(textarea);
+
+                                groupDiv.appendChild(card);
+                            });
+
+                            // Botón para añadir nuevo item
+                            const btnAdd = document.createElement("button");
+                            btnAdd.textContent = "+ Añadir item";
+                            btnAdd.style = "margin:8px 0 8px 16px;";
+                            btnAdd.onclick = () => {
+                                const spellsNode = levelNode.querySelector("spells");
+                                if (!spellsNode) return;
+                                const newSpell = xmlDocGlobal.createElement("spell");
+                                ["name", "description"].forEach(tag => {
+                                    const n = xmlDocGlobal.createElement(tag);
+                                    n.textContent = "";
+                                    newSpell.appendChild(n);
+                                });
+                                spellsNode.appendChild(newSpell);
+                                renderTab();
+                            };
+                            groupDiv.appendChild(btnAdd);
+                        });
+                    });
+                }
+
+                // --- OTHERS ---
+                else if (activeTab === "Others") {
+                    const othersets = xmlDocGlobal.querySelectorAll("character > otherspellset > *");
+                    if (othersets.length === 0) {
+                        container.appendChild(document.createTextNode("No others found."));
+                        return;
+                    }
+                    othersets.forEach(set => {
+                        const label = set.querySelector("label")?.textContent || "Others";
+                        const cl = set.querySelector("cl")?.textContent || "";
+                        const cc = set.querySelector("cc > misc")?.textContent || "";
+                        const title = document.createElement("div");
+                        title.innerHTML = `<b>${label}</b> <span style="color:#888;">CL ${cl} CC ${cc}</span>`;
+                        title.style = "margin:16px 0 4px 0; font-size:17px; text-align:left;";
+                        container.appendChild(title);
+
+                        set.querySelectorAll("levels > *").forEach(levelNode => {
+                            const lvl = levelNode.querySelector("level")?.textContent || levelNode.nodeName.replace("level", "");
+                            const spells = levelNode.querySelectorAll("spells > *");
+                            if (spells.length === 0) return;
+                            const groupDiv = document.createElement("div");
+                            groupDiv.innerHTML = `<b>Level ${lvl}</b>`;
+                            groupDiv.style = "margin:8px 0 4px 0; font-size:15px; text-align:left;";
+                            container.appendChild(groupDiv);
+
+                            // Tarjetas editables simplificadas
+                            renderEditableSimpleSpells(levelNode, groupDiv, xmlDocGlobal, renderTab);
+
+                            // Botón para añadir nuevo spell
+                            const btnAdd = document.createElement("button");
+                            btnAdd.textContent = "+ Añadir hechizo";
+                            btnAdd.style = "margin:8px 0 8px 16px;";
+                            btnAdd.onclick = () => {
+                                const spellsNode = levelNode.querySelector("spells");
+                                if (!spellsNode) return;
+                                const newSpell = xmlDocGlobal.createElement("spell");
+                                ["name", "school", "description"].forEach(tag => {
+                                    const n = xmlDocGlobal.createElement(tag);
+                                    n.textContent = "";
+                                    newSpell.appendChild(n);
+                                });
+                                spellsNode.appendChild(newSpell);
+                                renderTab();
+                            };
+                            groupDiv.appendChild(btnAdd);
+                        });
+                    });
+                }
+            }
+
+            renderTab();
+            cambiarVisibilidad("vistaActions");
         }
 
         /**
@@ -1125,10 +2362,6 @@
                 if (n.innerHTML && n.getAttribute("type") === "formattedtext") n.innerHTML = n.innerHTML.trim();
             });
         }
-
-        // Pestañas aún no implementadas (alerta placeholder)
-        function mostrarVistaNotes(btn) { alert("Notes no implementado."); }
-        function mostrarVistaActions(btn) { alert("Actions no implementado."); }
     </script>
 </body>
 
