@@ -1521,6 +1521,28 @@
             invTitle.textContent = "Items del Inventario";
             invWrapper.appendChild(invTitle);
 
+            // --- Botón Añadir Objeto ---
+            const btnAddObj = document.createElement("button");
+            btnAddObj.textContent = "+ Añadir Objeto";
+            btnAddObj.style = "margin-bottom:12px;";
+            btnAddObj.onclick = () => {
+                const invList = xmlDocGlobal?.querySelector("character > inventorylist");
+                if (!invList) return;
+                // Genera un id único
+                let idx = 1;
+                while (invList.querySelector(`id-${String(idx).padStart(5, "0")}`)) idx++;
+                const newItem = xmlDocGlobal.createElement(`id-${String(idx).padStart(5, "0")}`);
+                // Campos básicos
+                ["count", "name", "location", "carried", "weight"].forEach(tag => {
+                    const n = xmlDocGlobal.createElement(tag);
+                    n.textContent = (tag === "count" || tag === "weight") ? "1" : "";
+                    newItem.appendChild(n);
+                });
+                invList.appendChild(newItem);
+                mostrarVistaInventory(btn);
+            };
+            invWrapper.appendChild(btnAddObj);
+
             const invList = xmlDocGlobal?.querySelector("character > inventorylist");
             if (!invList || invList.children.length === 0) {
                 invWrapper.appendChild(document.createTextNode("No hay items en el inventario."));
@@ -1540,7 +1562,6 @@
                     };
                     card.appendChild(btnDel);
 
-                    // Campos editables
                     [
                         ["Cantidad", "count"],
                         ["Nombre", "name"],
@@ -1575,6 +1596,26 @@
             const goldTitle = document.createElement("h3");
             goldTitle.textContent = "Tesoro (Gold)";
             goldWrapper.appendChild(goldTitle);
+
+            // --- Botón Añadir Tesoro ---
+            const btnAddGold = document.createElement("button");
+            btnAddGold.textContent = "+ Añadir Tesoro";
+            btnAddGold.style = "margin-bottom:12px;";
+            btnAddGold.onclick = () => {
+                let coin = xmlDocGlobal?.querySelector("character > coin");
+                if (!coin) {
+                    coin = xmlDocGlobal.createElement("coin");
+                    ["total", "spent", "carried"].forEach(tag => {
+                        const n = xmlDocGlobal.createElement(tag);
+                        n.textContent = "0";
+                        coin.appendChild(n);
+                    });
+                    const char = xmlDocGlobal.querySelector("character");
+                    char.appendChild(coin);
+                }
+                mostrarVistaInventory(btn);
+            };
+            goldWrapper.appendChild(btnAddGold);
 
             const coin = xmlDocGlobal?.querySelector("character > coin");
             [
